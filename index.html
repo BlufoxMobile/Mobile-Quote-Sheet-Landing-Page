@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xfinity Mobile — 6th Gen Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0a0318;
+    --bg: #120629;
+    --bg-soft: #1a0c3d;
+    --card: rgba(40, 20, 80, 0.55);
+    --card-solid: #1e0d44;
+    --border: rgba(167, 139, 250, 0.18);
+    --border-strong: rgba(167, 139, 250, 0.35);
+    --ink: #f5f3ff;
+    --ink-soft: #c4b5fd;
+    --ink-faint: #8b7cb8;
+    --purple: #8b5cf6;
+    --purple-bright: #a78bfa;
+    --green: #86efac;
+    --green-glow: #4ade80;
+    --red: #e63946;
+    --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(139, 92, 246, 0.15);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(139, 92, 246, 0.2);
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg-deep);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 20% 0%, rgba(139, 92, 246, 0.25), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(236, 72, 153, 0.15), transparent 60%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(59, 130, 246, 0.12), transparent 60%);
+    background-attachment: fixed;
+  }
+
+  /* star dust */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 80% 30%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 30% 70%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(2px 2px at 45% 45%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 60% 15%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(2px 2px at 85% 60%, rgba(255,255,255,0.5), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Floating orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #8b5cf6, transparent 70%);
+    top: 10%;
+    left: -100px;
+    animation: float1 20s ease-in-out infinite;
+  }
+  .orb-2 {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, #ec4899, transparent 70%);
+    top: 40%;
+    right: -80px;
+    animation: float2 25s ease-in-out infinite;
+  }
+  .orb-3 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, #3b82f6, transparent 70%);
+    bottom: 10%;
+    left: 30%;
+    animation: float3 18s ease-in-out infinite;
+  }
+  @keyframes float1 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(60px, 40px); }
+  }
+  @keyframes float2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-50px, 60px); }
+  }
+  @keyframes float3 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(40px, -50px); }
+  }
+
+  /* Twinkling stars */
+  .star-twinkle {
+    position: fixed;
+    color: #fff;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 1;
+    animation: twinkle 3s ease-in-out infinite;
+    opacity: 0.6;
+  }
+  .star-twinkle.s1 { top: 8%; left: 15%; animation-delay: 0s; }
+  .star-twinkle.s2 { top: 20%; right: 12%; animation-delay: 1s; font-size: 16px; }
+  .star-twinkle.s3 { top: 50%; left: 8%; animation-delay: 2s; font-size: 10px; }
+  .star-twinkle.s4 { top: 75%; right: 8%; animation-delay: 0.5s; font-size: 14px; }
+  .star-twinkle.s5 { top: 35%; right: 25%; animation-delay: 1.5s; }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); }
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+
+  /* ========== PAGE HEADER ========== */
+  .page-header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 18px;
+    background: rgba(139, 92, 246, 0.12);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+  }
+  .brand::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--green-glow);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.25), 0 0 12px rgba(74, 222, 128, 0.5);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  h1.page-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(40px, 7vw, 72px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+    font-variation-settings: "opsz" 144;
+  }
+  h1.page-title em {
+    font-style: italic;
+    background: linear-gradient(135deg, #a78bfa, #f0abfc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .page-subtitle {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* ========== SECTION HEADING ========== */
+  .section-head {
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--purple-bright);
+    margin-bottom: 10px;
+  }
+  h2.section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(36px, 5.5vw, 56px);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    position: relative;
+    display: inline-block;
+    font-variation-settings: "opsz" 144;
+  }
+  h2.section-title em {
+    font-style: italic;
+    background: linear-gradient(135deg, #a78bfa, #f0abfc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Sparkle decorations around title */
+  h2.section-title::before,
+  h2.section-title::after {
+    content: '✦';
+    position: absolute;
+    color: var(--purple-bright);
+    font-size: 0.4em;
+    opacity: 0.8;
+    animation: rotate 8s linear infinite;
+  }
+  h2.section-title::before { left: -1.2em; top: 20%; }
+  h2.section-title::after { right: -1.2em; top: 30%; animation-delay: 4s; }
+  @keyframes rotate {
+    from { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.3); }
+    to { transform: rotate(360deg) scale(1); }
+  }
+  .section-desc {
+    color: var(--ink-faint);
+    margin-top: 12px;
+    font-size: 15px;
+  }
+
+  /* Launch badge */
+  .launch-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 22px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.15));
+    border: 1px solid var(--border-strong);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
+    position: relative;
+  }
+  .launch-badge .rocket {
+    display: inline-block;
+    animation: rocket 2.5s ease-in-out infinite;
+  }
+  @keyframes rocket {
+    0%, 100% { transform: translate(0, 0) rotate(-45deg); }
+    50% { transform: translate(3px, -3px) rotate(-45deg); }
+  }
+  .launch-badge .date-pill {
+    background: var(--green);
+    color: #064e2e;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  /* ========== PLANS ========== */
+  .plans {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+  /* VS divider between plans on desktop */
+  .vs-divider {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #1a0c3d, #2d1569);
+    border: 2px solid var(--purple-bright);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--purple-bright);
+    z-index: 2;
+    box-shadow: 0 0 24px rgba(139, 92, 246, 0.5), inset 0 0 12px rgba(139, 92, 246, 0.2);
+    animation: vsPulse 3s ease-in-out infinite;
+  }
+  @keyframes vsPulse {
+    0%, 100% { box-shadow: 0 0 24px rgba(139, 92, 246, 0.5), inset 0 0 12px rgba(139, 92, 246, 0.2); }
+    50% { box-shadow: 0 0 36px rgba(167, 139, 250, 0.7), inset 0 0 12px rgba(139, 92, 246, 0.3); }
+  }
+  @media (max-width: 768px) { .vs-divider { display: none; } }
+
+  .plan-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    backdrop-filter: blur(20px);
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    animation: cardIn 0.7s ease-out backwards;
+  }
+  .plan-card:nth-child(2) { animation-delay: 0.1s; }
+  .plan-card:nth-child(3) { animation-delay: 0.2s; }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  /* Decorative corner accent */
+  .plan-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle at top left, rgba(139, 92, 246, 0.2), transparent 70%);
+    pointer-events: none;
+  }
+  .plan-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md), 0 0 40px rgba(139, 92, 246, 0.15);
+  }
+  .plan-card.featured {
+    background: linear-gradient(145deg, rgba(60, 30, 120, 0.6), rgba(40, 20, 80, 0.5));
+    border-color: rgba(167, 139, 250, 0.4);
+  }
+  .plan-card.featured::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.15), transparent 70%);
+    pointer-events: none;
+  }
+  .best-value {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: linear-gradient(135deg, #86efac, #4ade80);
+    color: #064e2e;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    box-shadow: 0 4px 16px rgba(74, 222, 128, 0.4);
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .best-value::before {
+    content: '★';
+    animation: spin 4s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .plan-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .plan-name {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .plan-name .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--purple-bright);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--purple-bright);
+  }
+  .featured .plan-name .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .plan-price {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    line-height: 1;
+    position: relative;
+  }
+  .plan-price .amount {
+    font-size: 52px;
+    letter-spacing: -0.03em;
+    font-variation-settings: "opsz" 144;
+    background: linear-gradient(135deg, #fff, #c4b5fd);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .featured .plan-price .amount {
+    background: linear-gradient(135deg, #a78bfa, #f0abfc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .plan-price .per {
+    font-size: 14px;
+    color: var(--ink-faint);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    margin-left: 2px;
+  }
+  .features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+  }
+  .feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.45;
+    transition: transform 0.2s ease;
+  }
+  .feature:hover { transform: translateX(3px); }
+  .feature-icon {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--purple-bright);
+    transition: all 0.2s ease;
+  }
+  .feature:hover .feature-icon {
+    background: rgba(139, 92, 246, 0.3);
+    transform: scale(1.1) rotate(-5deg);
+  }
+  .feature-icon svg { width: 14px; height: 14px; }
+  .feature .faint { color: var(--ink-faint); }
+  .highlight-green { color: var(--green); font-weight: 600; }
+  .highlight-green.underline { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .promo-tag {
+    background: linear-gradient(135deg, rgba(134, 239, 172, 0.12), rgba(134, 239, 172, 0.04));
+    border: 1px solid rgba(134, 239, 172, 0.25);
+    border-radius: 10px;
+    padding: 12px 14px !important;
+    margin: -2px 0 6px;
+    position: relative;
+    overflow: hidden;
+  }
+  .promo-tag::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(134, 239, 172, 0.15), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0% { left: -100%; }
+    50%, 100% { left: 100%; }
+  }
+
+  .plans-footer {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.05));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .plans-footer .label {
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .plans-footer .body {
+    color: var(--ink-soft);
+    font-size: 14px;
+    flex: 1;
+    min-width: 200px;
+  }
+  .plans-footer .body strong { color: var(--ink); }
+  .plans-footer em { color: var(--ink-faint); font-style: italic; }
+
+  .footnote {
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 13px;
+    font-style: italic;
+    margin-top: 20px;
+  }
+
+  /* ========== CTA SECTION ========== */
+  .cta-section {
+    margin: 80px 0;
+    text-align: center;
+  }
+  .cta-card {
+    background: linear-gradient(145deg, rgba(60, 30, 120, 0.7), rgba(100, 40, 180, 0.4));
+    border: 1px solid var(--border-strong);
+    border-radius: 24px;
+    padding: 56px 32px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-lg);
+  }
+  .cta-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(167, 139, 250, 0.25), transparent 60%);
+    pointer-events: none;
+    animation: driftRight 15s ease-in-out infinite;
+  }
+  .cta-card::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: -20%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(236, 72, 153, 0.18), transparent 60%);
+    pointer-events: none;
+    animation: driftLeft 18s ease-in-out infinite;
+  }
+  @keyframes driftRight {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-30px, 20px); }
+  }
+  @keyframes driftLeft {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, -20px); }
+  }
+  .cta-content { position: relative; z-index: 1; }
+  .cta-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cta-eyebrow::before, .cta-eyebrow::after {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--green);
+    opacity: 0.5;
+  }
+  .cta-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(36px, 5vw, 56px);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    font-variation-settings: "opsz" 144;
+  }
+  .cta-title em {
+    font-style: italic;
+    background: linear-gradient(135deg, #a78bfa, #f0abfc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .cta-desc {
+    color: var(--ink-soft);
+    max-width: 520px;
+    margin: 0 auto 32px;
+    font-size: 16px;
+  }
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 40px;
+    background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 100px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    transition: left 0.6s;
+  }
+  .cta-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 16px 40px rgba(139, 92, 246, 0.55), 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  .cta-button:hover::before { left: 100%; }
+  .cta-button svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s;
+  }
+  .cta-button:hover svg { transform: translateX(5px); }
+
+  /* Button stack wrapper */
+  .cta-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  /* Secondary button - glassy/outlined */
+  .cta-button-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 32px;
+    background: rgba(10, 3, 24, 0.5);
+    color: var(--ink);
+    text-decoration: none;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border: 1px solid var(--border-strong);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-button-secondary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(167,139,250,0.15), transparent);
+    transition: left 0.6s;
+  }
+  .cta-button-secondary:hover {
+    transform: translateY(-2px);
+    border-color: var(--purple-bright);
+    background: rgba(139, 92, 246, 0.15);
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.25);
+  }
+  .cta-button-secondary:hover::before { left: 100%; }
+  .cta-button-secondary svg {
+    width: 16px;
+    height: 16px;
+    color: var(--purple-bright);
+    transition: transform 0.3s;
+  }
+  .cta-button-secondary:hover svg { transform: translateX(4px); }
+
+  /* ========== DIVIDER ========== */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 80px 0 48px;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+  }
+  .divider-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--purple);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
+  }
+
+  /* ========== TRADE-IN TOOL ========== */
+  .tool-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .tool-card {
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 36px 32px;
+  }
+
+  .search-wrap { position: relative; }
+
+  .search-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 18px 56px 18px 22px;
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--ink);
+    background: rgba(10, 3, 24, 0.5);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+  .search-input::placeholder {
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+  .search-input:focus {
+    border-color: var(--purple-bright);
+    background: rgba(10, 3, 24, 0.8);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+  }
+
+  .search-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-faint);
+    pointer-events: none;
+  }
+
+  .suggestions {
+    margin-top: 10px;
+    background: var(--card-solid);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    max-height: 280px;
+    overflow-y: auto;
+    display: none;
+  }
+  .suggestions.active { display: block; }
+  .suggestion {
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 15px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--ink);
+  }
+  .suggestion:last-child { border-bottom: none; }
+  .suggestion:hover, .suggestion.active {
+    background: rgba(139, 92, 246, 0.2);
+    color: var(--purple-bright);
+  }
+  .suggestion .dev-name { font-weight: 500; }
+  .suggestion .dev-brand { font-size: 12px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .stage {
+    margin-top: 32px;
+    display: none;
+  }
+  .stage.active { display: block; animation: fadeUp 0.4s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .step-label::before {
+    content: '';
+    flex: 0 0 24px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .conditions {
+    display: grid;
+    gap: 10px;
+  }
+  .condition-btn {
+    text-align: left;
+    padding: 16px 20px;
+    background: rgba(10, 3, 24, 0.4);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .condition-btn:hover {
+    border-color: var(--purple-bright);
+    transform: translateY(-1px);
+    background: rgba(10, 3, 24, 0.6);
+  }
+  .condition-btn.selected {
+    border-color: var(--purple-bright);
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--purple-bright);
+  }
+  .condition-btn strong { color: var(--ink); }
+  .condition-btn.selected strong { color: var(--purple-bright); }
+  .condition-btn .arrow {
+    opacity: 0.4;
+    transition: transform 0.2s;
+    color: var(--purple-bright);
+  }
+  .condition-btn:hover .arrow { transform: translateX(3px); opacity: 1; }
+
+  .result {
+    background: linear-gradient(135deg, #0a0318 0%, #1e0d44 100%);
+    color: #fff;
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .result::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(167, 139, 250, 0.2), transparent 60%);
+    pointer-events: none;
+  }
+  .result-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .result-device {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .result-value {
+    font-family: 'Fraunces', serif;
+    font-size: 56px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-top: 14px;
+    position: relative;
+    font-variation-settings: "opsz" 144;
+  }
+  .result-value em {
+    font-style: italic;
+    font-weight: 500;
+    background: linear-gradient(135deg, #a78bfa, #f0abfc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .result-promo {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    position: relative;
+  }
+  .result-none {
+    background: rgba(10, 3, 24, 0.4);
+    border: 1.5px dashed var(--border);
+  }
+  .result-none .result-label { color: var(--ink-faint); }
+  .result-none .result-value { color: var(--ink); font-size: 28px; }
+  .result-none::before { display: none; }
+
+  .reset {
+    margin-top: 16px;
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset:hover {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--ink);
+    border-color: var(--purple-bright);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    background: var(--card-solid);
+    color: var(--ink);
+    padding: 12px 20px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-strong);
+    transition: transform 0.3s ease;
+    z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ========== FOOTER ========== */
+  .page-footer {
+    text-align: center;
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--ink-faint);
+    font-size: 13px;
+  }
+  .page-footer .rep-note {
+    font-style: italic;
+    margin-top: 6px;
+  }
+
+  /* ========== MOBILE ========== */
+  @media (max-width: 768px) {
+    main { padding: 32px 16px 64px; }
+    .plans { grid-template-columns: 1fr; gap: 16px; }
+    .best-value { right: 12px; }
+    .plan-card { padding: 28px 22px; }
+    .cta-card { padding: 36px 22px; }
+    .tool-card { padding: 28px 20px; }
+    .result-value { font-size: 44px; }
+    .divider { margin: 56px 0 32px; }
+    .cta-section { margin: 56px 0; }
+    .plans-footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Animated background elements -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="star-twinkle s1">✦</div>
+<div class="star-twinkle s2">✧</div>
+<div class="star-twinkle s3">✦</div>
+<div class="star-twinkle s4">✧</div>
+<div class="star-twinkle s5">✦</div>
+
+<main>
+
+  <!-- ============ PLANS SECTION ============ -->
+  <section>
+    <div class="section-head">
+      <div class="launch-badge">
+        <span class="rocket">🚀</span>
+        <span>Launching</span>
+        <span class="date-pill">April 22, 2026</span>
+      </div>
+      <h2 class="section-title">6th Generation <em>Plans</em></h2>
+      <p class="section-desc">Two simple tiers. One easy sell. ⚡</p>
+    </div>
+
+    <div class="plans">
+      <div class="vs-divider">vs</div>
+
+      <!-- MOBILE SELECT -->
+      <div class="plan-card">
+        <div class="plan-header">
+          <div class="plan-name"><span class="dot"></span>Mobile Select</div>
+          <div class="plan-price">
+            <span class="amount">$30</span><span class="per">/line</span>
+          </div>
+        </div>
+        <ul class="features">
+          <li class="feature promo-tag">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            </span>
+            <span><strong>New customer promo:</strong> First line <span class="highlight-green underline">FREE</span> for 12 months</span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+            </span>
+            <span>Each additional line: <strong>$30/mo</strong></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+            </span>
+            <span><strong>50GB premium data</strong> <span class="faint">(home &amp; abroad)</span></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+            </span>
+            <span><strong>15GB 5G mobile hotspot</strong> + unlimited 3G</span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect><path d="M6 10h2v4H6zM11 10h2v4h-2zM16 10h2v4h-2z"></path></svg>
+            </span>
+            <span><strong>HD video streaming</strong> <span class="faint">(720p, defaults 480p)</span></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            </span>
+            <span>Unlimited talk/text in <strong>250+ countries</strong></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            </span>
+            <span>Data in <strong>215+ countries</strong> <span class="faint">(10GB high-speed/cycle)</span></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+            </span>
+            <span><strong>WiFi PowerBoost</strong> <span class="faint">(23M+ hotspots)</span></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </span>
+            <span><strong>Advanced Security</strong> on the Go</span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            </span>
+            <span>Up to <strong>12 mobile lines</strong> + <strong>10 connected devices</strong></span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- MOBILE PLUS -->
+      <div class="plan-card featured">
+        <span class="best-value">Best Value</span>
+        <div class="plan-header">
+          <div class="plan-name"><span class="dot"></span>Mobile Plus</div>
+          <div class="plan-price">
+            <span class="amount">$45</span><span class="per">/line</span>
+          </div>
+        </div>
+        <ul class="features">
+          <li class="feature promo-tag">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            </span>
+            <span><strong>New customer promo:</strong> First line <span class="highlight-green">$15/mo</span> for 12 months</span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+            </span>
+            <span>Each additional line: <strong>$45/mo</strong></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 12a6 6 0 0 0-12 0 6 6 0 0 0 12 0z"></path><path d="M20 12c0 2-3 2-3 0a5 5 0 0 0-10 0c0 2-3 2-3 0a8 8 0 0 1 16 0z"></path></svg>
+            </span>
+            <span><strong>TRULY unlimited premium data</strong> — NEVER deprioritized</span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+            </span>
+            <span><strong>50GB 5G mobile hotspot</strong> + unlimited 3G</span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect><text x="12" y="15" text-anchor="middle" font-size="7" font-weight="700" fill="currentColor" stroke="none">4K</text></svg>
+            </span>
+            <span><strong>Ultra HD 4K</strong> video streaming</span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+            </span>
+            <span><strong>XMC Plus device protection</strong> <span class="highlight-green underline">INCLUDED FREE</span></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            </span>
+            <span><strong>Upgrade Anytime</strong> <span class="faint">(60-Day Wait)</span></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </span>
+            <span><strong>Xfinity Call Guard</strong> included <span class="faint">(Blocks Spam Calls)</span></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+            </span>
+            <span><strong>WiFi PowerBoost</strong></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            </span>
+            <span><strong>Unlimited international</strong> <span class="faint">(same as Select)</span></span>
+          </li>
+          <li class="feature">
+            <span class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            </span>
+            <span>Up to <strong>12 mobile lines</strong> + <strong>10 connected devices</strong></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Plans Footer -->
+    <div class="plans-footer">
+      <span class="label">Add Connected Devices:</span>
+      <span class="body">
+        <strong>All-in Tablet &amp; Watch Plan — $35/mo MAX</strong> for up to 10 watches/tablets combined.
+        Watches $10/mo, Tablets $20/mo. <em>With Mobile Plus, XMC Plus covers ALL connected devices.</em>
+      </span>
+    </div>
+    <p class="footnote">*By The Gig NOT available on 6th Gen plans.</p>
+  </section>
+
+  <!-- ============ CTA / QUOTE SHEET ============ -->
+  <section class="cta-section">
+    <div class="cta-card">
+      <div class="cta-content">
+        <div class="cta-eyebrow">Ready to Close</div>
+        <h2 class="cta-title">Launch a <em>Quote Sheet</em> 💸</h2>
+        <p class="cta-desc">Run a full side-by-side savings comparison in seconds. Mobile, Internet — pick your weapon.</p>
+        <div class="cta-buttons">
+          <a href="https://blufoxmobile.github.io/Mobile-Quote-Sheet-6th-Gen/" target="_blank" rel="noopener" class="cta-button">
+            <span>Open 6th Gen Quote Sheet</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+          </a>
+          <a href="https://blufoxmobile.github.io/Internet-Quote-Sheet/" target="_blank" rel="noopener" class="cta-button">
+            <span>Open Internet Quote Sheet</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DIVIDER ============ -->
+  <div class="divider">
+    <div class="divider-dot"></div>
+  </div>
+
+  <!-- ============ TRADE-IN TOOL ============ -->
+  <section>
+    <div class="section-head">
+      <div class="section-eyebrow">📱 TIPS Trade-In Lookup</div>
+      <h2 class="section-title">Find your <em>trade-in</em> value</h2>
+      <p class="section-desc">Search the device. Pick the condition. Get the promo. Built for the floor. 🎯</p>
+    </div>
+
+    <div class="tool-wrap">
+      <div class="tool-card">
+        <div class="search-wrap">
+          <label class="search-label" for="deviceSearch">Step 1 — Device</label>
+          <input
+            type="text"
+            id="deviceSearch"
+            class="search-input"
+            placeholder="Start typing a phone name…"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.35-4.35"></path></svg>
+          <div class="suggestions" id="suggestions"></div>
+        </div>
+
+        <div class="stage" id="conditionStage">
+          <div class="step-label">Step 2 — Condition</div>
+          <div class="conditions" id="conditions"></div>
+        </div>
+
+        <div class="stage" id="resultStage">
+          <div class="step-label">Step 3 — Offer</div>
+          <div class="result" id="resultCard"></div>
+          <button class="reset" id="resetBtn">↺ Start a new lookup</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="page-footer">
+    <div>✨ Blufox Mobile · Greater Chicago Region · 6th Gen Hub ✨</div>
+    <div class="rep-note">Built for our reps. Now go close some deals. 💪</div>
+  </footer>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ============ BAKED-IN TRADE-IN DATA ============
+  // Last updated: April 2026. To update, replace TRADE_DATA array below.
+  const TRADE_DATA = [{"device":"Apple iPhone 11","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone 11","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 11","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 11 Pro","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone 11 Pro","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 11 Pro","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 11 Pro Max","brand":"Apple","condition":"Good","value":500},{"device":"Apple iPhone 11 Pro Max","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 11 Pro Max","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 12","brand":"Apple","condition":"Good","value":500},{"device":"Apple iPhone 12","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 12","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 12 Mini","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone 12 Mini","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 12 Mini","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 12 Pro","brand":"Apple","condition":"Good","value":500},{"device":"Apple iPhone 12 Pro","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 12 Pro","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 12 Pro Max","brand":"Apple","condition":"Good","value":700},{"device":"Apple iPhone 12 Pro Max","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 12 Pro Max","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 13","brand":"Apple","condition":"Good","value":500},{"device":"Apple iPhone 13","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 13","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 13 Mini","brand":"Apple","condition":"Good","value":500},{"device":"Apple iPhone 13 Mini","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 13 Mini","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 13 Pro","brand":"Apple","condition":"Good","value":700},{"device":"Apple iPhone 13 Pro","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 13 Pro","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 13 Pro Max","brand":"Apple","condition":"Good","value":700},{"device":"Apple iPhone 13 Pro Max","brand":"Apple","condition":"Fair","value":500},{"device":"Apple iPhone 13 Pro Max","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 14","brand":"Apple","condition":"Good","value":600},{"device":"Apple iPhone 14","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 14","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 14 Plus","brand":"Apple","condition":"Good","value":700},{"device":"Apple iPhone 14 Plus","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 14 Plus","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 14 Pro","brand":"Apple","condition":"Good","value":700},{"device":"Apple iPhone 14 Pro","brand":"Apple","condition":"Fair","value":500},{"device":"Apple iPhone 14 Pro","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 14 Pro Max","brand":"Apple","condition":"Good","value":700},{"device":"Apple iPhone 14 Pro Max","brand":"Apple","condition":"Fair","value":600},{"device":"Apple iPhone 14 Pro Max","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 15","brand":"Apple","condition":"Good","value":700},{"device":"Apple iPhone 15","brand":"Apple","condition":"Fair","value":500},{"device":"Apple iPhone 15","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 15 Plus","brand":"Apple","condition":"Good","value":700},{"device":"Apple iPhone 15 Plus","brand":"Apple","condition":"Fair","value":600},{"device":"Apple iPhone 15 Plus","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 15 Pro","brand":"Apple","condition":"Good","value":830},{"device":"Apple iPhone 15 Pro","brand":"Apple","condition":"Good (Samsung TIPS)","value":1100},{"device":"Apple iPhone 15 Pro","brand":"Apple","condition":"Fair","value":600},{"device":"Apple iPhone 15 Pro Max","brand":"Apple","condition":"Good","value":830},{"device":"Apple iPhone 15 Pro Max","brand":"Apple","condition":"Good (Samsung TIPS)","value":1100},{"device":"Apple iPhone 15 Pro Max","brand":"Apple","condition":"Fair","value":700},{"device":"Apple iPhone 15 Pro Max","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 15 Pro","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 16","brand":"Apple","condition":"Good","value":830},{"device":"Apple iPhone 16","brand":"Apple","condition":"Good (Samsung TIPS)","value":1100},{"device":"Apple iPhone 16","brand":"Apple","condition":"Fair","value":700},{"device":"Apple iPhone 16","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 16 Plus","brand":"Apple","condition":"Good","value":830},{"device":"Apple iPhone 16 Plus","brand":"Apple","condition":"Good (Samsung TIPS)","value":1100},{"device":"Apple iPhone 16 Plus","brand":"Apple","condition":"Fair","value":700},{"device":"Apple iPhone 16 Plus","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 16 Pro","brand":"Apple","condition":"Good","value":830},{"device":"Apple iPhone 16 Pro","brand":"Apple","condition":"Good (Samsung TIPS)","value":1100},{"device":"Apple iPhone 16 Pro","brand":"Apple","condition":"Fair","value":700},{"device":"Apple iPhone 16 Pro","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 16 Pro Max","brand":"Apple","condition":"Good","value":830},{"device":"Apple iPhone 16 Pro Max","brand":"Apple","condition":"Good (Samsung TIPS)","value":1100},{"device":"Apple iPhone 16 Pro Max","brand":"Apple","condition":"Fair","value":830},{"device":"Apple iPhone 16 Pro Max","brand":"Apple","condition":"Fair (Samsung TIPS)","value":1100},{"device":"Apple iPhone 16 Pro Max","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 16e","brand":"Apple","condition":"Good","value":830},{"device":"Apple iPhone 16e","brand":"Apple","condition":"Good (Samsung TIPS)","value":1100},{"device":"Apple iPhone 16e","brand":"Apple","condition":"Fair","value":600},{"device":"Apple iPhone 16e","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 17","brand":"Apple","condition":"Good","value":830},{"device":"Apple iPhone 17","brand":"Apple","condition":"Good (Samsung TIPS)","value":1100},{"device":"Apple iPhone 17","brand":"Apple","condition":"Fair","value":830},{"device":"Apple iPhone 17","brand":"Apple","condition":"Fair (Samsung TIPS)","value":1100},{"device":"Apple iPhone 17","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 17 Pro","brand":"Apple","condition":"Good","value":830},{"device":"Apple iPhone 17 Pro","brand":"Apple","condition":"Good (Samsung TIPS)","value":1100},{"device":"Apple iPhone 17 Pro","brand":"Apple","condition":"Fair","value":830},{"device":"Apple iPhone 17 Pro","brand":"Apple","condition":"Fair (Samsung TIPS)","value":1100},{"device":"Apple iPhone 17 Pro","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 17 Pro Max","brand":"Apple","condition":"Good","value":830},{"device":"Apple iPhone 17 Pro Max","brand":"Apple","condition":"Good (Samsung TIPS)","value":1100},{"device":"Apple iPhone 17 Pro Max","brand":"Apple","condition":"Fair","value":830},{"device":"Apple iPhone 17 Pro Max","brand":"Apple","condition":"Fair (Samsung TIPS)","value":1100},{"device":"Apple iPhone 17 Pro Max","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone Air","brand":"Apple","condition":"Good","value":830},{"device":"Apple iPhone Air","brand":"Apple","condition":"Good (Samsung TIPS)","value":1100},{"device":"Apple iPhone Air","brand":"Apple","condition":"Fair","value":830},{"device":"Apple iPhone Air","brand":"Apple","condition":"Fair (Samsung TIPS)","value":1100},{"device":"Apple iPhone Air","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 7","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone 7","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 7","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 7 Plus","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone 7 Plus","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 7 Plus","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 8","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone 8","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 8","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone 8 Plus","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone 8 Plus","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone 8 Plus","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone SE 2","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone SE 2","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone SE 2","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone SE 3","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone SE 3","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone SE 3","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone X","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone X","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone X","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone XR","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone XR","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone XR","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone XS","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone XS","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone XS","brand":"Apple","condition":"Poor","value":450},{"device":"Apple iPhone XS Max","brand":"Apple","condition":"Good","value":450},{"device":"Apple iPhone XS Max","brand":"Apple","condition":"Fair","value":450},{"device":"Apple iPhone XS Max","brand":"Apple","condition":"Poor","value":450},{"device":"Google Pixel 10 5G","brand":"Google","condition":"Good","value":830},{"device":"Google Pixel 10 5G","brand":"Google","condition":"Good (Samsung TIPS)","value":1100},{"device":"Google Pixel 10 5G","brand":"Google","condition":"Fair","value":700},{"device":"Google Pixel 10 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 10 Pro 5G","brand":"Google","condition":"Good","value":830},{"device":"Google Pixel 10 Pro 5G","brand":"Google","condition":"Good (Samsung TIPS)","value":1100},{"device":"Google Pixel 10 Pro 5G","brand":"Google","condition":"Fair","value":700},{"device":"Google Pixel 10 Pro 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 10 Pro Fold","brand":"Google","condition":"Good","value":830},{"device":"Google Pixel 10 Pro Fold","brand":"Google","condition":"Good (Samsung TIPS)","value":1100},{"device":"Google Pixel 10 Pro Fold","brand":"Google","condition":"Fair","value":830},{"device":"Google Pixel 10 Pro Fold","brand":"Google","condition":"Fair (Samsung TIPS)","value":1100},{"device":"Google Pixel 10 Pro Fold","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 10 Pro XL 5G","brand":"Google","condition":"Good","value":830},{"device":"Google Pixel 10 Pro XL 5G","brand":"Google","condition":"Good (Samsung TIPS)","value":1100},{"device":"Google Pixel 10 Pro XL 5G","brand":"Google","condition":"Fair","value":830},{"device":"Google Pixel 10 Pro XL 5G","brand":"Google","condition":"Fair (Samsung TIPS)","value":1100},{"device":"Google Pixel 10 Pro XL 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 4","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 4","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 4","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 4 XL","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 4 XL","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 4 XL","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 4A","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 4A","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 4A","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 4A 5G","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 4A 5G","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 4A 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 5 5G","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 5 5G","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 5 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 5A 5G","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 5A 5G","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 5A 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 6","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 6","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 6","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 6 Pro","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 6 Pro","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 6 Pro","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 6A","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 6A","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 6A","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 7 5G","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 7 5G","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 7 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 7 Pro 5G","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 7 Pro 5G","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 7 Pro 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 7A 5G","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 7A 5G","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 7A 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 8 5G","brand":"Google","condition":"Good","value":450},{"device":"Google Pixel 8 5G","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 8 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 8 Pro 5G","brand":"Google","condition":"Good","value":700},{"device":"Google Pixel 8 Pro 5G","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 8 Pro 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 8A 5G","brand":"Google","condition":"Good","value":500},{"device":"Google Pixel 8A 5G","brand":"Google","condition":"Fair","value":450},{"device":"Google Pixel 8A 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 9 5G","brand":"Google","condition":"Good","value":700},{"device":"Google Pixel 9 5G","brand":"Google","condition":"Fair","value":500},{"device":"Google Pixel 9 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 9 Pro 5G","brand":"Google","condition":"Good","value":700},{"device":"Google Pixel 9 Pro 5G","brand":"Google","condition":"Fair","value":600},{"device":"Google Pixel 9 Pro 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 9 Pro Fold 5G","brand":"Google","condition":"Good","value":830},{"device":"Google Pixel 9 Pro Fold 5G","brand":"Google","condition":"Good (Samsung TIPS)","value":1100},{"device":"Google Pixel 9 Pro Fold 5G","brand":"Google","condition":"Fair","value":700},{"device":"Google Pixel 9 Pro Fold 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 9 Pro XL 5G","brand":"Google","condition":"Good","value":700},{"device":"Google Pixel 9 Pro XL 5G","brand":"Google","condition":"Fair","value":600},{"device":"Google Pixel 9 Pro XL 5G","brand":"Google","condition":"Poor","value":450},{"device":"Google Pixel 9A 5G","brand":"Google","condition":"Good","value":830},{"device":"Google Pixel 9A 5G","brand":"Google","condition":"Good (Samsung TIPS)","value":1100},{"device":"Google Pixel 9A 5G","brand":"Google","condition":"Fair","value":500},{"device":"Google Pixel 9A 5G","brand":"Google","condition":"Poor","value":450},{"device":"LG Stylo 6","brand":"LG","condition":"Good","value":450},{"device":"LG Stylo 6","brand":"LG","condition":"Fair","value":450},{"device":"LG Stylo 6","brand":"LG","condition":"Poor","value":450},{"device":"LG V50 ThinQ 5G","brand":"LG","condition":"Good","value":450},{"device":"LG V50 ThinQ 5G","brand":"LG","condition":"Fair","value":450},{"device":"LG V50 ThinQ 5G","brand":"LG","condition":"Poor","value":450},{"device":"LG V60 ThinQ 5G","brand":"LG","condition":"Good","value":450},{"device":"LG V60 ThinQ 5G","brand":"LG","condition":"Fair","value":450},{"device":"LG V60 ThinQ 5G","brand":"LG","condition":"Poor","value":450},{"device":"Motorola Edge 5G 2025","brand":"Motorola","condition":"Good","value":450},{"device":"Motorola Edge 5G 2025","brand":"Motorola","condition":"Fair","value":450},{"device":"Motorola Edge 5G 2025","brand":"Motorola","condition":"Poor","value":450},{"device":"Motorola Moto G Play 2023","brand":"Motorola","condition":"Good","value":450},{"device":"Motorola Moto G Play 2023","brand":"Motorola","condition":"Fair","value":450},{"device":"Motorola Moto G Play 2023","brand":"Motorola","condition":"Poor","value":450},{"device":"Motorola Moto G Stylus 5G","brand":"Motorola","condition":"Good","value":450},{"device":"Motorola Moto G Stylus 5G","brand":"Motorola","condition":"Fair","value":450},{"device":"Motorola Moto G Stylus 5G","brand":"Motorola","condition":"Poor","value":450},{"device":"Motorola Razr","brand":"Motorola","condition":"Good","value":450},{"device":"Motorola Razr","brand":"Motorola","condition":"Fair","value":450},{"device":"Motorola Razr","brand":"Motorola","condition":"Poor","value":450},{"device":"Motorola Razr 5G","brand":"Motorola","condition":"Good","value":450},{"device":"Motorola Razr 5G","brand":"Motorola","condition":"Fair","value":450},{"device":"Motorola Razr 5G","brand":"Motorola","condition":"Poor","value":450},{"device":"Motorola Razr 5G 2023","brand":"Motorola","condition":"Good","value":450},{"device":"Motorola Razr 5G 2023","brand":"Motorola","condition":"Fair","value":450},{"device":"Motorola Razr 5G 2023","brand":"Motorola","condition":"Poor","value":450},{"device":"Motorola Razr 5G 2024","brand":"Motorola","condition":"Good","value":450},{"device":"Motorola Razr 5G 2024","brand":"Motorola","condition":"Fair","value":450},{"device":"Motorola Razr 5G 2024","brand":"Motorola","condition":"Poor","value":450},{"device":"Motorola Razr 5G 2025","brand":"Motorola","condition":"Good","value":450},{"device":"Motorola Razr 5G 2025","brand":"Motorola","condition":"Fair","value":450},{"device":"Motorola Razr 5G 2025","brand":"Motorola","condition":"Poor","value":450},{"device":"Motorola Razr Plus 5G 2023","brand":"Motorola","condition":"Good","value":450},{"device":"Motorola Razr Plus 5G 2023","brand":"Motorola","condition":"Fair","value":450},{"device":"Motorola Razr Plus 5G 2023","brand":"Motorola","condition":"Poor","value":450},{"device":"OnePlus 8 5G","brand":"OnePlus","condition":"Good","value":450},{"device":"OnePlus 8 5G","brand":"OnePlus","condition":"Fair","value":450},{"device":"OnePlus 8 5G","brand":"OnePlus","condition":"Poor","value":450},{"device":"OnePlus 8 Pro 5G","brand":"OnePlus","condition":"Good","value":450},{"device":"OnePlus 8 Pro 5G","brand":"OnePlus","condition":"Fair","value":450},{"device":"OnePlus 8 Pro 5G","brand":"OnePlus","condition":"Poor","value":450},{"device":"OnePlus 8T","brand":"OnePlus","condition":"Good","value":450},{"device":"OnePlus 8T","brand":"OnePlus","condition":"Fair","value":450},{"device":"OnePlus 8T","brand":"OnePlus","condition":"Poor","value":450},{"device":"OnePlus 8T Plus 5G","brand":"OnePlus","condition":"Good","value":450},{"device":"OnePlus 8T Plus 5G","brand":"OnePlus","condition":"Fair","value":450},{"device":"OnePlus 8T Plus 5G","brand":"OnePlus","condition":"Poor","value":450},{"device":"OnePlus 9 5G","brand":"OnePlus","condition":"Good","value":450},{"device":"OnePlus 9 5G","brand":"OnePlus","condition":"Fair","value":450},{"device":"OnePlus 9 5G","brand":"OnePlus","condition":"Poor","value":450},{"device":"OnePlus 9 Pro 5G","brand":"OnePlus","condition":"Good","value":450},{"device":"OnePlus 9 Pro 5G","brand":"OnePlus","condition":"Fair","value":450},{"device":"OnePlus 9 Pro 5G","brand":"OnePlus","condition":"Poor","value":450},{"device":"Samsung Galaxy A13 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A13 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A13 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A14 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A14 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A14 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A16 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A16 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A16 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A25 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A25 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A25 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A26 5G","brand":"Samsung","condition":"Good","value":700},{"device":"Samsung Galaxy A26 5G","brand":"Samsung","condition":"Fair","value":600},{"device":"Samsung Galaxy A26 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A32 4G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A32 4G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A32 4G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A32 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A32 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A32 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A35 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A35 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A35 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A36 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A36 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A36 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A42 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A42 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A42 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A50","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A50","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A50","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A51","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A51","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A51","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A51 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A51 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A51 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A52 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A52 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A52 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A53 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A53 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A53 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A54 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A54 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A54 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A70","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A70","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A70","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A71","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A71","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A71","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A71 5G UW","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A71 5G UW","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A71 5G UW","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy A72","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy A72","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy A72","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Fold 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Fold 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Fold 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Note 10","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Note 10","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Note 10","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Note 10 Lite (6GB)","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Note 10 Lite (6GB)","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Note 10 Lite (6GB)","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Note 20 4G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Note 20 4G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Note 20 4G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Note 20 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Note 20 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Note 20 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Note 20 Ultra 4G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Note 20 Ultra 4G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Note 20 Ultra 4G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Note 20 Ultra 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Note 20 Ultra 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Note 20 Ultra 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Note 8","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Note 8","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Note 8","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Note 9","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Note 9","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Note 9","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S10","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S10","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S10","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S10E","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S10E","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S10E","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S10 Lite","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S10 Lite","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S10 Lite","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S10 Plus","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S10 Plus","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S10 Plus","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S20 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S20 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S20 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S20 5G UW","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S20 5G UW","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S20 5G UW","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S20 Fan Edition 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S20 Fan Edition 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S20 Fan Edition 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S20 Plus","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S20 Plus","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S20 Plus","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S20 Plus 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S20 Plus 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S20 Plus 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S20 Ultra 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S20 Ultra 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S20 Ultra 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S21 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S21 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S21 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S21 Fan Edition 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S21 Fan Edition 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S21 Fan Edition 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S21 Plus 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S21 Plus 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S21 Plus 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S21 Ultra 5G","brand":"Samsung","condition":"Good","value":500},{"device":"Samsung Galaxy S21 Ultra 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S21 Ultra 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S22 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S22 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S22 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S22 Plus 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S22 Plus 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S22 Plus 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S22 Ultra 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S22 Ultra 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S22 Ultra 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S23 5G","brand":"Samsung","condition":"Good","value":600},{"device":"Samsung Galaxy S23 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S23 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S23 Fan Edition 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S23 Fan Edition 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S23 Fan Edition 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S23 Plus 5G","brand":"Samsung","condition":"Good","value":600},{"device":"Samsung Galaxy S23 Plus 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S23 Plus 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S23 Ultra 5G","brand":"Samsung","condition":"Good","value":700},{"device":"Samsung Galaxy S23 Ultra 5G","brand":"Samsung","condition":"Fair","value":600},{"device":"Samsung Galaxy S23 Ultra 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S24 5G","brand":"Samsung","condition":"Good","value":600},{"device":"Samsung Galaxy S24 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S24 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S24 FE 5G","brand":"Samsung","condition":"Good","value":600},{"device":"Samsung Galaxy S24 FE 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S24 FE 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S24 Plus 5G","brand":"Samsung","condition":"Good","value":700},{"device":"Samsung Galaxy S24 Plus 5G","brand":"Samsung","condition":"Fair","value":600},{"device":"Samsung Galaxy S24 Plus 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S24 Ultra 5G","brand":"Samsung","condition":"Good","value":830},{"device":"Samsung Galaxy S24 Ultra 5G","brand":"Samsung","condition":"Good (Samsung TIPS)","value":1100},{"device":"Samsung Galaxy S24 Ultra 5G","brand":"Samsung","condition":"Fair","value":600},{"device":"Samsung Galaxy S24 Ultra 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S25 5G","brand":"Samsung","condition":"Good","value":830},{"device":"Samsung Galaxy S25 5G","brand":"Samsung","condition":"Good (Samsung TIPS)","value":1100},{"device":"Samsung Galaxy S25 5G","brand":"Samsung","condition":"Fair","value":600},{"device":"Samsung Galaxy S25 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S25 Edge 5G","brand":"Samsung","condition":"Good","value":830},{"device":"Samsung Galaxy S25 Edge 5G","brand":"Samsung","condition":"Good (Samsung TIPS)","value":1100},{"device":"Samsung Galaxy S25 Edge 5G","brand":"Samsung","condition":"Fair","value":700},{"device":"Samsung Galaxy S25 Edge 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S25 FE 5G","brand":"Samsung","condition":"Good","value":830},{"device":"Samsung Galaxy S25 FE 5G","brand":"Samsung","condition":"Good (Samsung TIPS)","value":1100},{"device":"Samsung Galaxy S25 FE 5G","brand":"Samsung","condition":"Fair","value":700},{"device":"Samsung Galaxy S25 FE 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S25 Plus 5G","brand":"Samsung","condition":"Good","value":830},{"device":"Samsung Galaxy S25 Plus 5G","brand":"Samsung","condition":"Good (Samsung TIPS)","value":1100},{"device":"Samsung Galaxy S25 Plus 5G","brand":"Samsung","condition":"Fair","value":700},{"device":"Samsung Galaxy S25 Plus 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S25 Ultra 5G","brand":"Samsung","condition":"Good","value":830},{"device":"Samsung Galaxy S25 Ultra 5G","brand":"Samsung","condition":"Good (Samsung TIPS)","value":1100},{"device":"Samsung Galaxy S25 Ultra 5G","brand":"Samsung","condition":"Fair","value":700},{"device":"Samsung Galaxy S25 Ultra 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S8","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S8","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S8","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S8 Plus","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S8 Plus","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S8 Plus","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S9","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S9","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S9","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy S9 Plus","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy S9 Plus","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy S9 Plus","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Flip","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Z Flip","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Flip","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Flip 3 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Z Flip 3 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Flip 3 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Flip 3 5G Thom Browne","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Z Flip 3 5G Thom Browne","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Flip 3 5G Thom Browne","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Flip 3 Bespoke","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Z Flip 3 Bespoke","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Flip 3 Bespoke","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Flip 4 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Z Flip 4 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Flip 4 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Flip 4 Bespoke","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Z Flip 4 Bespoke","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Flip 4 Bespoke","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Flip 5 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Z Flip 5 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Flip 5 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Flip 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Z Flip 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Flip 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Flip 6 5G","brand":"Samsung","condition":"Good","value":700},{"device":"Samsung Galaxy Z Flip 6 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Flip 6 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Flip 7 5G","brand":"Samsung","condition":"Good","value":830},{"device":"Samsung Galaxy Z Flip 7 5G","brand":"Samsung","condition":"Good (Samsung TIPS)","value":1100},{"device":"Samsung Galaxy Z Flip 7 5G","brand":"Samsung","condition":"Fair","value":700},{"device":"Samsung Galaxy Z Flip 7 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Flip 7 FE 5G","brand":"Samsung","condition":"Good","value":830},{"device":"Samsung Galaxy Z Flip 7 FE 5G","brand":"Samsung","condition":"Good (Samsung TIPS)","value":1100},{"device":"Samsung Galaxy Z Flip 7 FE 5G","brand":"Samsung","condition":"Fair","value":700},{"device":"Samsung Galaxy Z Flip 7 FE 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Fold 3 5G","brand":"Samsung","condition":"Good","value":500},{"device":"Samsung Galaxy Z Fold 3 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Fold 3 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Fold 4 5G","brand":"Samsung","condition":"Good","value":500},{"device":"Samsung Galaxy Z Fold 4 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Fold 4 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Fold 5 5G","brand":"Samsung","condition":"Good","value":700},{"device":"Samsung Galaxy Z Fold 5 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Fold 5 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Fold 6 5G","brand":"Samsung","condition":"Good","value":830},{"device":"Samsung Galaxy Z Fold 6 5G","brand":"Samsung","condition":"Good (Samsung TIPS)","value":1100},{"device":"Samsung Galaxy Z Fold 6 5G","brand":"Samsung","condition":"Fair","value":700},{"device":"Samsung Galaxy Z Fold 6 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Fold 7 5G","brand":"Samsung","condition":"Good","value":830},{"device":"Samsung Galaxy Z Fold 7 5G","brand":"Samsung","condition":"Good (Samsung TIPS)","value":1100},{"device":"Samsung Galaxy Z Fold 7 5G","brand":"Samsung","condition":"Fair","value":830},{"device":"Samsung Galaxy Z Fold 7 5G","brand":"Samsung","condition":"Fair (Samsung TIPS)","value":1100},{"device":"Samsung Galaxy Z Fold 7 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Galaxy Z Fold2 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Galaxy Z Fold2 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Galaxy Z Fold2 5G","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Note 10 Plus","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Note 10 Plus","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Note 10 Plus","brand":"Samsung","condition":"Poor","value":450},{"device":"Samsung Note 10 Plus 5G","brand":"Samsung","condition":"Good","value":450},{"device":"Samsung Note 10 Plus 5G","brand":"Samsung","condition":"Fair","value":450},{"device":"Samsung Note 10 Plus 5G","brand":"Samsung","condition":"Poor","value":450}];
+
+  let tradeData = [];
+  let selectedDevice = null;
+  let selectedCondition = null;
+
+  const CONDITION_ORDER = ['Good', 'Good (Samsung TIPS)', 'Fair', 'Fair (Samsung TIPS)', 'Poor', 'Broken'];
+  const CONDITION_DESC = {
+    'Good': 'Powers on, screen intact, fully functional',
+    'Good (Samsung TIPS)': 'Same as Good — bonus Samsung TIPS promo value',
+    'Fair': 'Minor wear, screen intact, fully functional',
+    'Fair (Samsung TIPS)': 'Same as Fair — bonus Samsung TIPS promo value',
+    'Poor': 'Visible damage but powers on and works',
+    'Broken': 'Damaged screen or will not power on'
+  };
+
+  function loadBakedData() {
+    tradeData = TRADE_DATA.map(r => ({ ...r, promo: '' }));
+    resetLookup();
+  }
+
+  const searchInput = document.getElementById('deviceSearch');
+  const suggestionsEl = document.getElementById('suggestions');
+
+  function uniqueDevices() {
+    const seen = new Map();
+    tradeData.forEach(r => {
+      if (!seen.has(r.device)) seen.set(r.device, r.brand);
+    });
+    return Array.from(seen.entries()).map(([device, brand]) => ({ device, brand }));
+  }
+
+  function getSuggestions(q) {
+    if (!q) return [];
+    const query = q.toLowerCase();
+    return uniqueDevices()
+      .filter(d => d.device.toLowerCase().includes(query) || (d.brand && d.brand.toLowerCase().includes(query)))
+      .slice(0, 8);
+  }
+
+  let activeSuggestion = -1;
+
+  function renderSuggestions(items) {
+    if (!items.length) {
+      suggestionsEl.classList.remove('active');
+      suggestionsEl.innerHTML = '';
+      return;
+    }
+    suggestionsEl.innerHTML = items.map((it, i) => `
+      <div class="suggestion${i === activeSuggestion ? ' active' : ''}" data-device="${escape(it.device)}">
+        <span class="dev-name">${escape(it.device)}</span>
+        <span class="dev-brand">${escape(it.brand)}</span>
+      </div>
+    `).join('');
+    suggestionsEl.classList.add('active');
+    suggestionsEl.querySelectorAll('.suggestion').forEach(el => {
+      el.addEventListener('click', () => selectDevice(el.dataset.device));
+    });
+  }
+
+  function escape(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  searchInput.addEventListener('input', e => {
+    activeSuggestion = -1;
+    renderSuggestions(getSuggestions(e.target.value));
+    document.getElementById('conditionStage').classList.remove('active');
+    document.getElementById('resultStage').classList.remove('active');
+  });
+
+  searchInput.addEventListener('keydown', e => {
+    const items = suggestionsEl.querySelectorAll('.suggestion');
+    if (!items.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); activeSuggestion = Math.min(activeSuggestion + 1, items.length - 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); activeSuggestion = Math.max(activeSuggestion - 1, 0); }
+    else if (e.key === 'Enter' && activeSuggestion >= 0) { e.preventDefault(); selectDevice(items[activeSuggestion].dataset.device); return; }
+    else return;
+    items.forEach((el, i) => el.classList.toggle('active', i === activeSuggestion));
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrap')) suggestionsEl.classList.remove('active');
+  });
+
+  function selectDevice(deviceName) {
+    selectedDevice = deviceName;
+    searchInput.value = deviceName;
+    suggestionsEl.classList.remove('active');
+    renderConditions();
+  }
+
+  function renderConditions() {
+    const conds = tradeData
+      .filter(r => r.device === selectedDevice)
+      .map(r => r.condition);
+    const unique = [...new Set(conds)].sort((a, b) => {
+      const ai = CONDITION_ORDER.indexOf(a);
+      const bi = CONDITION_ORDER.indexOf(b);
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+    const wrap = document.getElementById('conditions');
+    wrap.innerHTML = unique.map(c => `
+      <button class="condition-btn" data-condition="${escape(c)}">
+        <span>
+          <strong>${escape(c)}</strong>
+          <span style="display:block; font-size:12px; color:var(--ink-faint); margin-top:2px; font-weight:400;">
+            ${escape(CONDITION_DESC[c] || '')}
+          </span>
+        </span>
+        <span class="arrow">→</span>
+      </button>
+    `).join('');
+    wrap.querySelectorAll('.condition-btn').forEach(btn => {
+      btn.addEventListener('click', () => selectCondition(btn.dataset.condition));
+    });
+    document.getElementById('conditionStage').classList.add('active');
+    document.getElementById('resultStage').classList.remove('active');
+  }
+
+  function selectCondition(cond) {
+    selectedCondition = cond;
+    document.querySelectorAll('.condition-btn').forEach(b => {
+      b.classList.toggle('selected', b.dataset.condition === cond);
+    });
+    renderResult();
+  }
+
+  function renderResult() {
+    const match = tradeData.find(r => r.device === selectedDevice && r.condition === selectedCondition);
+    const card = document.getElementById('resultCard');
+    if (!match || match.value === 0) {
+      card.className = 'result result-none';
+      card.innerHTML = `
+        <div class="result-label">No current offer</div>
+        <div class="result-device">${escape(selectedDevice)} — ${escape(selectedCondition)}</div>
+        <div class="result-value">Not eligible</div>
+        <div class="result-promo" style="color:var(--ink-faint);">
+          This device and condition combination does not have an active trade-in offer.
+        </div>
+      `;
+    } else {
+      card.className = 'result';
+      const value = match.value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+      card.innerHTML = `
+        <div class="result-label">Trade-in Offer</div>
+        <div class="result-device">${escape(selectedDevice)} — ${escape(selectedCondition)}</div>
+        <div class="result-value">Up to <em>${value}</em></div>
+        ${match.promo ? `<div class="result-promo">${escape(match.promo)}</div>` : ''}
+      `;
+    }
+    document.getElementById('resultStage').classList.add('active');
+  }
+
+  function resetLookup() {
+    selectedDevice = null;
+    selectedCondition = null;
+    searchInput.value = '';
+    suggestionsEl.classList.remove('active');
+    document.getElementById('conditionStage').classList.remove('active');
+    document.getElementById('resultStage').classList.remove('active');
+  }
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    resetLookup();
+    searchInput.focus();
+  });
+
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2200);
+  }
+
+  // Init — load baked-in trade-in data
+  loadBakedData();
+</script>
+
+</body>
+</html>
