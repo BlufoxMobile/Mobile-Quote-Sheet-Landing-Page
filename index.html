@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Blufox Mobile — The Mobile Close</title>
 
 <!-- Google Fonts: Anton (display) + Poppins (body) -->
@@ -14,8 +14,20 @@
 /* =====================================================================
    BLUFOX MOBILE — THE MOBILE CLOSE
    Single-file neon hype page for sales reps.
+   Performance-hardened for iPad / iOS Safari + desktop.
+
    Sections: :root vars · base · background FX · hero · script steps ·
              quote launchers · footer · animations · reduced-motion · responsive
+
+   PERF NOTES (why this version is butter-smooth on iOS):
+   - No canvas shadowBlur in the render loop — sparks are a pre-rendered
+     glow sprite drawn with drawImage. DPR capped at 1.5.
+   - No JS scroll handler. Orbs drift via CSS transform only (or static).
+   - No filter: hue-rotate animation on the full-screen background.
+   - No backdrop-filter anywhere — cards use solid semi-transparent fills.
+   - Continuous glow uses opacity/transform on dedicated layers, never
+     animated box-shadow/drop-shadow.
+   - Hero uses 100svh so it fits the visible viewport on iOS.
    ===================================================================== */
 
 /* ---------- THEME VARIABLES ---------- */
@@ -28,7 +40,7 @@
   --lime: #d4ff3f;
   --ink: #f3f0ff;
   --muted: #b6b0d8;
-  --card: rgba(255, 255, 255, 0.035);
+  --card: rgba(18, 14, 38, 0.55);
   --card-line: rgba(255, 255, 255, 0.10);
   --display: 'Anton', Impact, sans-serif;
   --body: 'Poppins', system-ui, sans-serif;
@@ -36,40 +48,54 @@
 
 /* ---------- BASE / RESET ---------- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  max-width: 100%;
+}
 body {
   font-family: var(--body);
   color: var(--ink);
   background: var(--bg-0);
   overflow-x: hidden;
+  max-width: 100%;
   position: relative;
   min-height: 100vh;
+  min-height: 100svh;
 }
 a { text-decoration: none; color: inherit; }
 img { max-width: 100%; }
 
 /* =====================================================================
-   ANIMATED BACKGROUND — shifting gradient + drifting neon orbs + canvas sparks
+   STATIC NEON BACKGROUND — rich multi-radial gradient + drifting orbs
+   + GPU-cheap spark canvas. NO filter animation, NO backdrop-filter.
    ===================================================================== */
 .bg-gradient {
   position: fixed; inset: 0; z-index: -3;
+  pointer-events: none;
   background:
     radial-gradient(1200px 800px at 15% 10%, rgba(255,45,149,0.18), transparent 60%),
     radial-gradient(1000px 900px at 85% 30%, rgba(0,240,255,0.16), transparent 60%),
     radial-gradient(1000px 1000px at 50% 100%, rgba(150,80,255,0.16), transparent 60%),
     linear-gradient(140deg, var(--bg-0), var(--bg-1) 45%, var(--bg-2));
-  animation: hueShift 26s ease-in-out infinite alternate;
 }
-@keyframes hueShift {
-  0%   { filter: hue-rotate(0deg) saturate(1); }
-  50%  { filter: hue-rotate(35deg) saturate(1.15); }
-  100% { filter: hue-rotate(-25deg) saturate(1.05); }
+/* GPU-cheap, very slow opacity pulse only (no filter, no repaint). */
+.bg-gradient::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(900px 700px at 80% 15%, rgba(255,45,149,0.10), transparent 60%),
+    radial-gradient(900px 700px at 20% 80%, rgba(0,240,255,0.10), transparent 60%);
+  opacity: 0.5;
+  animation: bgPulse 16s ease-in-out infinite alternate;
+  will-change: opacity;
 }
+@keyframes bgPulse { from { opacity: 0.35; } to { opacity: 0.7; } }
 
-/* Drifting neon orbs (parallax handled in JS) */
+/* Drifting neon orbs — CSS transform drift only (cheap), lower blur/opacity. */
 .orb {
   position: fixed; border-radius: 50%; z-index: -2;
-  filter: blur(60px); opacity: 0.55;
+  filter: blur(40px); opacity: 0.4;
   pointer-events: none; will-change: transform;
 }
 .orb.o1 { width: 420px; height: 420px; top: -80px; left: -60px;  background: var(--magenta); animation: drift1 18s ease-in-out infinite alternate; }
@@ -79,7 +105,10 @@ img { max-width: 100%; }
 @keyframes drift2 { to { transform: translate(-70px, 50px) scale(1.1); } }
 @keyframes drift3 { to { transform: translate(60px, -50px) scale(1.2); } }
 
-/* Spark canvas */
+/* On low-power devices we kill orb drift via this class (set in JS). */
+.no-orb-drift .orb { animation: none !important; }
+
+/* Spark canvas — behind content, never blocks touch. */
 #sparks { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 
 /* =====================================================================
@@ -107,7 +136,8 @@ img { max-width: 100%; }
    HERO
    ===================================================================== */
 .hero {
-  min-height: 100vh;
+  min-height: 100vh;        /* fallback first */
+  min-height: 100svh;       /* iOS-correct visible height */
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 90px 5vw 60px; position: relative;
 }
@@ -119,20 +149,20 @@ img { max-width: 100%; }
 .hero h1 {
   font-family: var(--display);
   line-height: 0.92;
-  font-size: clamp(3.2rem, 13vw, 9.5rem);
+  font-size: clamp(3rem, 11vw, 8.5rem);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   background: linear-gradient(92deg, var(--cyan), var(--magenta) 55%, var(--lime));
   background-size: 220% 220%;
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
-  animation: gradientFlow 7s ease infinite, titlePulse 3.4s ease-in-out infinite;
-  filter: drop-shadow(0 0 26px rgba(255,45,149,0.35));
+  animation: gradientFlow 7s ease infinite;
+  /* static glow — no animated drop-shadow */
+  filter: drop-shadow(0 0 22px rgba(255,45,149,0.32));
   margin-bottom: 10px;
 }
 .hero h1 .pop { display: block; }
 @keyframes gradientFlow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-@keyframes titlePulse  { 0%,100%{filter:drop-shadow(0 0 22px rgba(0,240,255,0.30))} 50%{filter:drop-shadow(0 0 40px rgba(255,45,149,0.55))} }
 
 .hero .subline {
   font-size: clamp(1rem, 2.6vw, 1.55rem);
@@ -171,7 +201,7 @@ img { max-width: 100%; }
 .script-head p { color: var(--muted); margin-top: 14px; font-size: clamp(0.95rem,2.2vw,1.15rem); }
 
 .timeline { position: relative; max-width: 820px; margin: 0 auto; }
-/* glowing connecting line */
+/* glowing connecting line — static glow only */
 .timeline::before {
   content: ""; position: absolute; left: 46px; top: 30px; bottom: 30px; width: 3px;
   background: linear-gradient(var(--cyan), var(--magenta), var(--lime));
@@ -184,7 +214,7 @@ img { max-width: 100%; }
 }
 .step:last-child { padding-bottom: 0; }
 
-/* big pulsing numbers */
+/* big numbers with a layered ::after glow whose OPACITY animates (GPU-cheap) */
 .step .num {
   flex: 0 0 auto;
   width: 92px; height: 92px; border-radius: 22px;
@@ -192,24 +222,32 @@ img { max-width: 100%; }
   font-family: var(--display); font-size: 2.7rem;
   color: var(--bg-0);
   background: linear-gradient(135deg, var(--cyan), var(--magenta));
-  box-shadow: 0 0 0 4px rgba(7,7,13,1), 0 0 28px rgba(0,240,255,0.55), 0 0 50px rgba(255,45,149,0.35);
+  /* static base ring + glow (not animated) */
+  box-shadow: 0 0 0 4px rgba(7,7,13,1), 0 0 26px rgba(0,240,255,0.5), 0 0 46px rgba(255,45,149,0.32);
   position: relative; z-index: 2;
-  animation: numPulse 2.8s ease-in-out infinite;
+  animation: numScale 2.8s ease-in-out infinite;
+  will-change: transform;
 }
-.step:nth-child(2) .num { animation-delay: .3s; }
-.step:nth-child(3) .num { animation-delay: .6s; }
-.step:nth-child(4) .num { animation-delay: .9s; }
-@keyframes numPulse {
-  0%,100% { box-shadow: 0 0 0 4px rgba(7,7,13,1), 0 0 22px rgba(0,240,255,0.45), 0 0 40px rgba(255,45,149,0.30); transform: scale(1); }
-  50%     { box-shadow: 0 0 0 4px rgba(7,7,13,1), 0 0 38px rgba(0,240,255,0.75), 0 0 70px rgba(255,45,149,0.55); transform: scale(1.05); }
+/* the pulsing glow lives on a separate layer; only its opacity animates */
+.step .num::after {
+  content: ""; position: absolute; inset: -10px; border-radius: 28px;
+  background: radial-gradient(closest-side, rgba(0,240,255,0.55), rgba(255,45,149,0.30), transparent 75%);
+  opacity: 0.45; z-index: -1; pointer-events: none;
+  animation: glowPulse 2.8s ease-in-out infinite;
+  will-change: opacity;
 }
+.step:nth-child(2) .num, .step:nth-child(2) .num::after { animation-delay: .3s; }
+.step:nth-child(3) .num, .step:nth-child(3) .num::after { animation-delay: .6s; }
+.step:nth-child(4) .num, .step:nth-child(4) .num::after { animation-delay: .9s; }
+@keyframes numScale { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+@keyframes glowPulse { 0%,100%{opacity:0.35} 50%{opacity:0.9} }
 
 .step .card {
   flex: 1; background: var(--card); border: 1px solid var(--card-line);
   border-radius: 20px; padding: 24px 26px;
-  backdrop-filter: blur(6px);
   box-shadow: 0 0 30px rgba(0,0,0,0.35);
   animation: cardFloat 6s ease-in-out infinite;
+  will-change: transform;
 }
 .step:nth-child(odd) .card { animation-delay: .8s; }
 @keyframes cardFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
@@ -230,6 +268,7 @@ img { max-width: 100%; }
   margin: -28px 0 4px 0;
   animation: bob 1.8s ease-in-out infinite;
   text-shadow: 0 0 16px rgba(212,255,63,0.6);
+  will-change: transform;
 }
 @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
 
@@ -237,15 +276,20 @@ img { max-width: 100%; }
 .step.finale .num {
   width: 104px; height: 104px; font-size: 3.1rem; border-radius: 26px;
   background: linear-gradient(135deg, var(--magenta), var(--lime));
-  animation: finalePulse 1.8s ease-in-out infinite;
+  box-shadow: 0 0 0 4px rgba(7,7,13,1), 0 0 32px rgba(255,45,149,0.6), 0 0 56px rgba(212,255,63,0.45);
+  animation: finaleScale 1.8s ease-in-out infinite;
 }
-@keyframes finalePulse {
-  0%,100% { box-shadow: 0 0 0 4px rgba(7,7,13,1), 0 0 34px rgba(255,45,149,0.7), 0 0 60px rgba(212,255,63,0.5); transform: scale(1) rotate(-1deg); }
-  50%     { box-shadow: 0 0 0 4px rgba(7,7,13,1), 0 0 60px rgba(255,45,149,1), 0 0 110px rgba(212,255,63,0.8); transform: scale(1.08) rotate(1deg); }
+.step.finale .num::after {
+  inset: -12px; border-radius: 32px;
+  background: radial-gradient(closest-side, rgba(255,45,149,0.6), rgba(212,255,63,0.35), transparent 75%);
+  animation: finaleGlow 1.8s ease-in-out infinite;
 }
+@keyframes finaleScale { 0%,100%{transform:scale(1) rotate(-1deg)} 50%{transform:scale(1.08) rotate(1deg)} }
+@keyframes finaleGlow  { 0%,100%{opacity:0.45} 50%{opacity:1} }
+
 .step.finale .card {
   border-color: rgba(255,45,149,0.55);
-  background: linear-gradient(135deg, rgba(255,45,149,0.12), rgba(212,255,63,0.05));
+  background: linear-gradient(135deg, rgba(255,45,149,0.16), rgba(212,255,63,0.07)), rgba(18,14,38,0.55);
   box-shadow: 0 0 50px rgba(255,45,149,0.35);
 }
 .step.finale .label { color: var(--lime); text-shadow: 0 0 14px rgba(212,255,63,0.6); }
@@ -254,9 +298,9 @@ img { max-width: 100%; }
   font-size: clamp(1.5rem, 5vw, 2.8rem); line-height: 1.05;
   background: linear-gradient(92deg, var(--magenta), var(--lime));
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: micGlow 2.2s ease-in-out infinite;
+  /* static neon glow — no animated drop-shadow */
+  filter: drop-shadow(0 0 22px rgba(255,45,149,0.55));
 }
-@keyframes micGlow { 0%,100%{filter:drop-shadow(0 0 18px rgba(255,45,149,0.5))} 50%{filter:drop-shadow(0 0 34px rgba(212,255,63,0.7))} }
 
 .run-line {
   text-align: center; margin-top: 52px;
@@ -264,8 +308,11 @@ img { max-width: 100%; }
   font-size: clamp(1.3rem, 4.5vw, 2.4rem);
   color: var(--cyan); letter-spacing: 1px;
   text-shadow: 0 0 24px rgba(0,240,255,0.55);
-  animation: titlePulse 3s ease-in-out infinite;
+  /* gentle GPU-cheap scale instead of box-shadow pulse */
+  animation: runScale 3s ease-in-out infinite;
+  will-change: transform;
 }
+@keyframes runScale { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
 
 /* =====================================================================
    QUOTE SHEET LAUNCHER
@@ -286,9 +333,9 @@ img { max-width: 100%; }
   display: flex; flex-direction: column; gap: 14px;
   padding: 34px 28px; border-radius: 22px;
   background: var(--card); border: 1px solid var(--card-line);
-  backdrop-filter: blur(6px);
   transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s, border-color .35s;
   box-shadow: 0 0 24px rgba(0,0,0,0.4);
+  -webkit-tap-highlight-color: transparent;
 }
 .launch-card .icon {
   width: 60px; height: 60px; border-radius: 16px;
@@ -307,7 +354,7 @@ img { max-width: 100%; }
 .launch-card.c3 .act { color: var(--lime); }
 .launch-card .act .arr { transition: transform .3s; }
 
-/* hover: lift + glow + shine sweep */
+/* hover: lift + glow + shine sweep (desktop only — box-shadow here is fine) */
 .launch-card::before {
   content: ""; position: absolute; top: 0; left: -120%; width: 70%; height: 100%;
   background: linear-gradient(110deg, transparent, rgba(255,255,255,0.25), transparent);
@@ -318,6 +365,9 @@ img { max-width: 100%; }
 .launch-card.c3:hover { border-color: rgba(212,255,63,0.6); box-shadow: 0 14px 50px rgba(212,255,63,0.4); }
 .launch-card:hover::before { left: 130%; }
 .launch-card:hover .act .arr { transform: translateX(6px); }
+
+/* touch tap feedback (hover doesn't exist on touch devices) */
+.launch-card:active { transform: scale(0.98); }
 
 /* =====================================================================
    FOOTER
@@ -342,7 +392,6 @@ footer .copy { color: var(--muted); margin-top: 18px; font-size: 0.8rem; }
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .reveal { opacity: 1 !important; transform: none !important; }
   #sparks { display: none; }
-  .bg-gradient { filter: none; }
 }
 
 /* =====================================================================
@@ -357,13 +406,13 @@ footer .copy { color: var(--muted); margin-top: 18px; font-size: 0.8rem; }
   .step .num { width: 64px; height: 64px; font-size: 1.9rem; border-radius: 16px; }
   .step.finale .num { width: 72px; height: 72px; font-size: 2.1rem; }
   .flow { width: 64px; }
-  .orb { opacity: 0.4; filter: blur(50px); }
+  .orb { opacity: 0.32; filter: blur(36px); }
 }
 </style>
 </head>
 <body>
 
-<!-- ===================== ANIMATED BACKGROUND ===================== -->
+<!-- ===================== STATIC NEON BACKGROUND ===================== -->
 <div class="bg-gradient"></div>
 <div class="orb o1"></div>
 <div class="orb o2"></div>
@@ -485,59 +534,95 @@ footer .copy { color: var(--muted); margin-top: 18px; font-size: 0.8rem; }
 
 <script>
 /* =====================================================================
-   JS — IntersectionObserver reveals · parallax orbs · spark canvas
-   All vanilla, performant, reduced-motion aware.
+   JS — IntersectionObserver reveals + GPU-cheap spark canvas.
+   No scroll handler. No per-frame shadowBlur. rAF pauses when hidden.
    ===================================================================== */
 (function () {
   "use strict";
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---- Scroll-triggered reveals ---- */
+  /* ---- Performance auto-detect ---- */
+  var LOWPOWER = window.matchMedia('(pointer:coarse)').matches ||
+                 (navigator.hardwareConcurrency || 4) <= 4 ||
+                 window.matchMedia('(max-width: 820px)').matches;
+
+  /* On low-power devices (iPad reports pointer:coarse), kill orb drift.
+     Gradient + static orbs + reveals are plenty. */
+  if (LOWPOWER) {
+    document.body.classList.add("no-orb-drift");
+  }
+
+  /* ---- Scroll-triggered reveals (cheap, kept) ---- */
   var reveals = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window && !reduced) {
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e, i) {
+      entries.forEach(function (e) {
         if (e.isIntersecting) {
-          // small stagger for grouped items
-          setTimeout(function () { e.target.classList.add("in"); }, (e.target.dataset.delay ? +e.target.dataset.delay : 0));
+          var d = e.target.dataset.delay ? +e.target.dataset.delay : 0;
+          setTimeout(function () { e.target.classList.add("in"); }, d);
           io.unobserve(e.target);
         }
       });
     }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
     reveals.forEach(function (el) { if (!el.classList.contains("in")) io.observe(el); });
+
+    /* SAFETY NET: if the observer never fires for some elements (iOS layout
+       quirks, bfcache restore, strict threshold on tall elements), reveal
+       anything still hidden after a few seconds so content is NEVER stuck
+       invisible. */
+    setTimeout(function () {
+      reveals.forEach(function (el) {
+        if (!el.classList.contains("in")) {
+          el.classList.add("in");
+          if (io) { try { io.unobserve(el); } catch (e) {} }
+        }
+      });
+    }, 2500);
   } else {
     // No observer support or reduced motion: show everything
     reveals.forEach(function (el) { el.classList.add("in"); });
   }
 
-  /* ---- Parallax drift on background orbs ---- */
-  if (!reduced) {
-    var orbs = document.querySelectorAll(".orb");
-    var ticking = false;
-    window.addEventListener("scroll", function () {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function () {
-        var y = window.pageYOffset;
-        orbs.forEach(function (o, i) {
-          var depth = (i + 1) * 0.06;
-          o.style.transform = "translateY(" + (y * depth) + "px)";
-        });
-        ticking = false;
-      });
-    }, { passive: true });
-  }
+  /* =====================================================================
+     SPARK CANVAS — pre-rendered glow sprite drawn with drawImage.
+     No shadowBlur in the loop. DPR capped at 1.5. rAF pauses when hidden.
+     Skipped entirely on reduced-motion and on the very weakest devices.
+     ===================================================================== */
+  var skipCanvas = reduced ||
+                   (LOWPOWER && (navigator.hardwareConcurrency || 4) <= 2);
 
-  /* ---- Lightweight neon spark canvas (capped particle count) ---- */
-  if (!reduced) {
+  if (!skipCanvas) {
     var canvas = document.getElementById("sparks");
     var ctx = canvas.getContext("2d");
     var W, H, dpr, particles = [];
     var COLORS = ["#00f0ff", "#ff2d95", "#d4ff3f", "#8a44ff"];
-    var COUNT = 46; // capped for performance
+
+    // Particle count: fewer on low-power, fewer still on small/coarse.
+    var COUNT = LOWPOWER ? 12 : 22;
+
+    /* ---- One-time soft glow sprites (radial gradient), one per color ----
+       Built ONCE on a small offscreen canvas. shadowBlur is NEVER used. */
+    var SPRITE = 32;            // sprite size in CSS px
+    var sprites = {};
+    function buildSprites() {
+      COLORS.forEach(function (col) {
+        var s = document.createElement("canvas");
+        s.width = s.height = SPRITE;
+        var sc = s.getContext("2d");
+        var g = sc.createRadialGradient(SPRITE/2, SPRITE/2, 0, SPRITE/2, SPRITE/2, SPRITE/2);
+        g.addColorStop(0, col);
+        g.addColorStop(0.35, col);
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        sc.fillStyle = g;
+        sc.beginPath();
+        sc.arc(SPRITE/2, SPRITE/2, SPRITE/2, 0, Math.PI * 2);
+        sc.fill();
+        sprites[col] = s;
+      });
+    }
 
     function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5); // cap DPR at 1.5
       W = canvas.width = Math.floor(innerWidth * dpr);
       H = canvas.height = Math.floor(innerHeight * dpr);
       canvas.style.width = innerWidth + "px";
@@ -547,7 +632,8 @@ footer .copy { color: var(--muted); margin-top: 18px; font-size: 0.8rem; }
       return {
         x: Math.random() * W,
         y: Math.random() * H,
-        r: (Math.random() * 1.8 + 0.6) * dpr,
+        // sprite draw size (px on the device canvas)
+        sz: (Math.random() * 14 + 8) * dpr,
         vx: (Math.random() - 0.5) * 0.25 * dpr,
         vy: (-Math.random() * 0.4 - 0.1) * dpr,
         a: Math.random() * 0.6 + 0.2,
@@ -560,7 +646,8 @@ footer .copy { color: var(--muted); margin-top: 18px; font-size: 0.8rem; }
       particles = [];
       for (var i = 0; i < COUNT; i++) particles.push(spark());
     }
-    var t = 0;
+
+    var t = 0, rafId = null, running = false;
     function loop() {
       ctx.clearRect(0, 0, W, H);
       t += 0.016;
@@ -568,26 +655,45 @@ footer .copy { color: var(--muted); margin-top: 18px; font-size: 0.8rem; }
         var p = particles[i];
         p.x += p.vx; p.y += p.vy;
         // wrap
-        if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
-        if (p.x < -10) p.x = W + 10;
-        if (p.x > W + 10) p.x = -10;
+        if (p.y < -20) { p.y = H + 20; p.x = Math.random() * W; }
+        if (p.x < -20) p.x = W + 20;
+        if (p.x > W + 20) p.x = -20;
         var alpha = p.a * (0.6 + 0.4 * Math.sin(t * 50 * p.tw + p.x));
-        ctx.beginPath();
-        ctx.fillStyle = p.c;
-        ctx.shadowBlur = 12 * dpr;
-        ctx.shadowColor = p.c;
         ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
+        var img = sprites[p.c];
+        // cheap: just blit the pre-rendered glow sprite
+        ctx.drawImage(img, p.x - p.sz / 2, p.y - p.sz / 2, p.sz, p.sz);
       }
-      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
-      requestAnimationFrame(loop);
+      ctx.globalAlpha = 1;
+      rafId = requestAnimationFrame(loop);
     }
+    function start() {
+      if (running) return;
+      running = true;
+      rafId = requestAnimationFrame(loop);
+    }
+    function stop() {
+      running = false;
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    }
+
+    buildSprites();
     init();
-    loop();
+    start();
+
+    // Pause the loop when the tab/page is hidden; resume on return.
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) stop();
+      else start();
+    });
+
     var rt;
     window.addEventListener("resize", function () {
-      clearTimeout(rt); rt = setTimeout(init, 200);
+      clearTimeout(rt);
+      rt = setTimeout(function () {
+        init();
+        if (!document.hidden) start();
+      }, 200);
     });
   }
 })();
