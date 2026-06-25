@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Blufox Mobile — The Mobile Close</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blufox Mobile — The Mobile Discount Close</title>
 
 <!-- Google Fonts: Anton (display) + Poppins (body) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,23 +13,27 @@
 <style>
 /* =====================================================================
    BLUFOX MOBILE — THE MOBILE DISCOUNT CLOSE
-   SINGLE-VIEWPORT, NO-SCROLL neon hype page for sales reps.
-   Everything (headline + 4-step script + 3 quote sheets) visible at once.
+   COMPACT, CONTENT-SIZED neon block designed to be EMBEDDED inside
+   cookcountycooks.com/mobile-quote-sheets (rendered below the site nav,
+   inside an auto-height iframe / content area).
 
-   Sections: :root vars · base/no-scroll · background FX · stage layout ·
-             header · script steps · quote launchers · footer ·
-             animations · reduced-motion · responsive/orientation
+   KEY DESIGN RULES FOR THE EMBED:
+   - Height is natural / content-driven so it flows like a normal block
+     (no full-viewport sizing, no clipping on body/html/wrapper).
+   - All neon background decoration lives INSIDE the absolutely-clipped
+     panel as absolute layers, so nothing escapes the iframe.
+   - No JS scaling, no per-frame drawing surface, no scroll listeners.
+     Normal stacked flow with tight gaps — no space-between dead gaps.
 
-   PERF NOTES (kept butter-smooth on iPad / iOS Safari):
-   - No canvas at all in this compact build — just a static gradient and a
-     couple of cheap CSS-transform drifting orbs. Nothing per-frame in JS
-     except the debounced auto-fit measurement.
-   - No JS scroll handler (there is no scroll).
-   - No filter: hue-rotate animation; no backdrop-filter anywhere.
+   PERF / iOS-SAFE:
    - Continuous motion animates ONLY transform / opacity / background-position.
-     Never animated box-shadow or drop-shadow.
-   - Wrapper is the 100svh box (overflow hidden). The inner .stage is what
-     the JS auto-fit may transform: scale() down to guarantee it always fits.
+   - Static blurred orbs are absolutely positioned inside the panel.
+   - On-load staggered reveal is time-based (no IntersectionObserver/scroll),
+     with a JS safety net so nothing can stay invisible.
+
+   Sections: :root vars · base · panel + background FX · hero ·
+             script grid · connector · quote launchers · footer ·
+             reveal · reduced-motion · responsive
    ===================================================================== */
 
 /* ---------- THEME VARIABLES ---------- */
@@ -48,326 +52,299 @@
   --body: 'Poppins', system-ui, sans-serif;
 }
 
-/* ---------- BASE / RESET / NO-SCROLL ---------- */
+/* ---------- BASE / RESET (natural height, no no-scroll tricks) ---------- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html {
-  -webkit-text-size-adjust: 100%;
-}
+html { -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--body);
   color: var(--ink);
-  background: var(--bg-0);
-  position: relative;
-  /* Single-viewport, no scroll. svh after vh fallback for iOS. */
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden;
+  /* transparent so it blends with the host site; panel provides the neon */
+  background: transparent;
   -webkit-tap-highlight-color: transparent;
 }
 a { text-decoration: none; color: inherit; }
 
 /* =====================================================================
-   STATIC NEON BACKGROUND — multi-radial gradient + a couple of cheap
-   drifting orbs. NO canvas, NO filter animation, NO backdrop-filter.
+   OUTER WRAP — just centers the panel with a little breathing room.
+   Natural height: it is exactly as tall as its content.
    ===================================================================== */
-.bg-gradient {
-  position: fixed; inset: 0; z-index: -3; pointer-events: none;
-  background:
-    radial-gradient(1200px 800px at 15% 10%, rgba(255,45,149,0.18), transparent 60%),
-    radial-gradient(1000px 900px at 85% 30%, rgba(0,240,255,0.16), transparent 60%),
-    radial-gradient(1000px 1000px at 50% 100%, rgba(150,80,255,0.16), transparent 60%),
-    linear-gradient(140deg, var(--bg-0), var(--bg-1) 45%, var(--bg-2));
+.wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: clamp(10px, 2vw, 22px);
 }
-/* GPU-cheap, very slow opacity pulse only (no filter, no repaint). */
+
+/* =====================================================================
+   PANEL — the single centered rounded neon block. This is the positioned,
+   overflow-clipped container that holds ALL background decoration so the
+   orbs/gradient can never escape into the host page.
+   ===================================================================== */
+.panel {
+  position: relative;        /* containment context for absolute bg layers */
+  overflow: hidden;          /* clip orbs/gradient to the rounded block */
+  width: 100%;
+  max-width: 1100px;
+  border-radius: clamp(18px, 2.4vw, 30px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: var(--bg-0);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+  /* TIGHT vertical padding — compact, content-driven height */
+  padding: clamp(16px, 3vw, 34px) clamp(14px, 3vw, 40px) clamp(16px, 3vw, 32px);
+}
+
+/* ---- Static neon gradient (absolute, inside the panel) ---- */
+.bg-gradient {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(900px 600px at 12% 0%, rgba(255,45,149,0.20), transparent 60%),
+    radial-gradient(900px 700px at 90% 18%, rgba(0,240,255,0.18), transparent 60%),
+    radial-gradient(900px 800px at 50% 110%, rgba(150,80,255,0.18), transparent 60%),
+    linear-gradient(140deg, var(--bg-0), var(--bg-1) 48%, var(--bg-2));
+}
+/* very slow, cheap opacity-only pulse (no filter, no repaint) */
 .bg-gradient::after {
   content: ""; position: absolute; inset: 0;
   background:
-    radial-gradient(900px 700px at 80% 15%, rgba(255,45,149,0.10), transparent 60%),
-    radial-gradient(900px 700px at 20% 80%, rgba(0,240,255,0.10), transparent 60%);
+    radial-gradient(700px 500px at 80% 10%, rgba(255,45,149,0.10), transparent 60%),
+    radial-gradient(700px 500px at 18% 85%, rgba(0,240,255,0.10), transparent 60%);
   opacity: 0.5;
   animation: bgPulse 16s ease-in-out infinite alternate;
   will-change: opacity;
 }
 @keyframes bgPulse { from { opacity: 0.35; } to { opacity: 0.7; } }
 
-/* Two drifting neon orbs — CSS transform drift only (cheap). */
+/* ---- Two small blurred neon orbs (absolute, inside the panel) ---- */
 .orb {
-  position: fixed; border-radius: 50%; z-index: -2;
-  filter: blur(46px); opacity: 0.38;
+  position: absolute; border-radius: 50%; z-index: 0;
+  filter: blur(42px); opacity: 0.34;
   pointer-events: none; will-change: transform;
 }
-.orb.o1 { width: 40vmin; height: 40vmin; top: -8vmin; left: -6vmin;  background: var(--magenta); animation: drift1 20s ease-in-out infinite alternate; }
-.orb.o2 { width: 44vmin; height: 44vmin; bottom: -10vmin; right: -10vmin; background: var(--cyan); animation: drift2 24s ease-in-out infinite alternate; }
-@keyframes drift1 { to { transform: translate(7vmin, 6vmin) scale(1.15); } }
-@keyframes drift2 { to { transform: translate(-6vmin, -5vmin) scale(1.1); } }
-/* On low-power devices we kill orb drift via this class (set in JS). */
-.no-orb-drift .orb { animation: none !important; }
+.orb.o1 { width: 240px; height: 240px; top: -70px; left: -50px;  background: var(--magenta); animation: drift1 20s ease-in-out infinite alternate; }
+.orb.o2 { width: 260px; height: 260px; bottom: -90px; right: -70px; background: var(--cyan); animation: drift2 24s ease-in-out infinite alternate; }
+@keyframes drift1 { to { transform: translate(40px, 34px) scale(1.12); } }
+@keyframes drift2 { to { transform: translate(-34px, -28px) scale(1.10); } }
 
-/* =====================================================================
-   STAGE — the 100svh wrapper holds .stage, which fills the height and
-   distributes content top→bottom with no big empty gaps.
-   .stage is the element the JS auto-fit may scale() down to guarantee fit.
-   ===================================================================== */
-.viewport {
-  position: relative;
-  height: 100vh; height: 100svh;
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-}
-.stage {
-  width: 100%;
-  max-width: 1280px;
-  height: 100%;
-  margin: 0 auto;
-  padding: clamp(10px, 2.4vh, 26px) clamp(14px, 3vw, 40px);
-  display: flex;
-  flex-direction: column;
-  /* fill the height evenly — no large empty regions */
-  justify-content: space-between;
-  gap: clamp(8px, 1.6vh, 20px);
-  transform-origin: top center;
-}
+/* All real content sits above the background layers */
+.content { position: relative; z-index: 1; }
 
-/* Reveal-on-load base state (quick staggered fade/scale, no observer). */
+/* Reveal-on-load base state (time-based stagger; no observer) */
 .reveal {
-  opacity: 0; transform: translateY(16px) scale(0.98);
-  transition: opacity .55s cubic-bezier(.2,.7,.2,1), transform .55s cubic-bezier(.2,.7,.2,1);
+  opacity: 0; transform: translateY(14px) scale(0.99);
+  transition: opacity .5s cubic-bezier(.2,.7,.2,1), transform .5s cubic-bezier(.2,.7,.2,1);
 }
 .reveal.in { opacity: 1; transform: none; }
 
 /* =====================================================================
-   (a) COMPACT HEADER — brand tag + gradient headline + one-line subline
+   (1) COMPACT HERO — brand chip + gradient headline + one-line subline.
+   Small vertical padding, no scroll cue.
    ===================================================================== */
-.header { text-align: center; flex: 0 0 auto; }
+.hero { text-align: center; padding-bottom: clamp(12px, 2.2vw, 22px); }
 .brand-tag {
   display: inline-block;
-  font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase;
-  font-size: clamp(0.55rem, 1.3vmin, 0.78rem);
+  font-weight: 800; letter-spacing: 0.20em; text-transform: uppercase;
+  font-size: clamp(0.58rem, 1.1vw, 0.74rem);
   color: var(--cyan);
-  padding: clamp(3px,0.6vh,6px) clamp(8px,1.4vw,14px);
+  padding: 4px 12px;
   border: 1px solid rgba(0,240,255,0.35); border-radius: 999px;
   background: rgba(0,240,255,0.06);
   text-shadow: 0 0 12px rgba(0,240,255,0.6);
-  margin-bottom: clamp(4px, 0.9vh, 10px);
+  margin-bottom: clamp(8px, 1.4vw, 14px);
 }
-.header h1 {
+.hero h1 {
   font-family: var(--display);
-  line-height: 0.92;
-  font-size: clamp(1.7rem, 6.6vmin, 4.6rem);
+  line-height: 0.94;
+  font-size: clamp(1.9rem, 6vw, 4rem);
   text-transform: uppercase; letter-spacing: 0.5px;
   background: linear-gradient(92deg, var(--cyan), var(--magenta) 55%, var(--lime));
   background-size: 220% 220%;
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
   animation: gradientFlow 7s ease infinite;
-  /* static glow — no animated drop-shadow */
-  filter: drop-shadow(0 0 18px rgba(255,45,149,0.30));
+  /* static glow — NOT animated */
+  filter: drop-shadow(0 0 16px rgba(255,45,149,0.30));
 }
 @keyframes gradientFlow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-.header .subline {
-  font-size: clamp(0.78rem, 1.9vmin, 1.15rem);
+.hero .subline {
+  font-size: clamp(0.85rem, 1.8vw, 1.1rem);
   font-weight: 500; color: var(--ink);
-  margin-top: clamp(3px, 0.8vh, 9px);
+  margin-top: clamp(6px, 1.2vw, 12px);
 }
-.header .subline b { color: var(--lime); text-shadow: 0 0 14px rgba(212,255,63,0.45); font-weight: 700; }
+.hero .subline b { color: var(--lime); text-shadow: 0 0 14px rgba(212,255,63,0.45); font-weight: 700; }
 
 /* =====================================================================
-   (b) THE SCRIPT — 4 steps. Orientation-aware:
-       wide/landscape = horizontal row of 4 cards w/ glowing → connectors.
-       narrow/portrait = tight 2x2 grid.
+   (2) THE SCRIPT — tight 2x2 grid of 4 compact cards.
+   Cards are only as tall as their content (no forced min-heights).
    ===================================================================== */
-.script {
-  flex: 1 1 auto;
-  min-height: 0;            /* allow flex child to shrink */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.script-eyebrow {
+.section-eyebrow {
   text-align: center;
-  font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;
-  font-size: clamp(0.55rem, 1.25vmin, 0.78rem);
-  color: var(--magenta); text-shadow: 0 0 12px rgba(255,45,149,0.5);
-  margin-bottom: clamp(6px, 1.2vh, 14px);
+  font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase;
+  font-size: clamp(0.58rem, 1.1vw, 0.74rem);
+  margin-bottom: clamp(8px, 1.4vw, 14px);
 }
+.script-eyebrow { color: var(--magenta); text-shadow: 0 0 12px rgba(255,45,149,0.5); }
 
-/* The steps container. Default (wide) = single horizontal row. */
 .steps {
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  gap: clamp(4px, 0.8vw, 12px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* 2x2 */
+  gap: clamp(8px, 1.4vw, 16px);
 }
 
-/* A numbered step card */
+/* A numbered step card — compact, content-height */
 .step {
-  flex: 1 1 0;
-  min-width: 0;
   background: var(--card);
   border: 1px solid var(--card-line);
-  border-radius: clamp(12px, 1.6vmin, 20px);
-  padding: clamp(10px, 1.8vmin, 22px) clamp(10px, 1.6vmin, 20px);
-  box-shadow: 0 0 26px rgba(0,0,0,0.35);
-  display: flex; flex-direction: column; gap: clamp(5px, 1vmin, 11px);
-  animation: cardFloat 6s ease-in-out infinite;
-  will-change: transform;
+  border-radius: clamp(12px, 1.4vw, 18px);
+  padding: clamp(12px, 1.8vw, 18px);
+  box-shadow: 0 0 22px rgba(0,0,0,0.30);
+  display: flex; flex-direction: column; gap: clamp(6px, 0.9vw, 10px);
 }
-.step:nth-child(odd) { animation-delay: .8s; }
-@keyframes cardFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
-/* big glowing step number — opacity-animated glow on a separate layer */
+/* glowing step number — smaller (56–64px), opacity glow on separate layer */
 .step .num {
   flex: 0 0 auto;
-  width: clamp(38px, 6.4vmin, 64px); height: clamp(38px, 6.4vmin, 64px);
-  border-radius: clamp(10px, 1.4vmin, 18px);
+  width: clamp(48px, 5vw, 60px); height: clamp(48px, 5vw, 60px);
+  border-radius: clamp(12px, 1.4vw, 16px);
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--display); font-size: clamp(1.2rem, 3.4vmin, 2.3rem);
+  font-family: var(--display); font-size: clamp(1.5rem, 2.6vw, 2.1rem);
   color: var(--bg-0);
   background: linear-gradient(135deg, var(--cyan), var(--magenta));
-  box-shadow: 0 0 0 3px rgba(7,7,13,1), 0 0 22px rgba(0,240,255,0.5), 0 0 40px rgba(255,45,149,0.30);
+  box-shadow: 0 0 0 3px rgba(7,7,13,1), 0 0 20px rgba(0,240,255,0.45), 0 0 34px rgba(255,45,149,0.28);
   position: relative; z-index: 2;
   animation: numScale 2.8s ease-in-out infinite;
   will-change: transform;
 }
 .step .num::after {
-  content: ""; position: absolute; inset: -8px; border-radius: 24px;
+  content: ""; position: absolute; inset: -8px; border-radius: 22px;
   background: radial-gradient(closest-side, rgba(0,240,255,0.55), rgba(255,45,149,0.30), transparent 75%);
   opacity: 0.45; z-index: -1; pointer-events: none;
   animation: glowPulse 2.8s ease-in-out infinite;
   will-change: opacity;
 }
-.step:nth-child(3) .num, .step:nth-child(3) .num::after { animation-delay: .3s; }
-.step:nth-child(5) .num, .step:nth-child(5) .num::after { animation-delay: .6s; }
-.step:nth-child(7) .num, .step:nth-child(7) .num::after { animation-delay: .9s; }
+.step:nth-child(2) .num, .step:nth-child(2) .num::after { animation-delay: .3s; }
+.step:nth-child(3) .num, .step:nth-child(3) .num::after { animation-delay: .6s; }
+.step:nth-child(4) .num, .step:nth-child(4) .num::after { animation-delay: .9s; }
 @keyframes numScale  { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
 @keyframes glowPulse { 0%,100%{opacity:0.35} 50%{opacity:0.9} }
 
 .step .label {
-  font-size: clamp(0.55rem, 1.15vmin, 0.74rem); font-weight: 800;
-  letter-spacing: 0.16em; text-transform: uppercase;
+  font-size: clamp(0.6rem, 1.05vw, 0.74rem); font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cyan); text-shadow: 0 0 10px rgba(0,240,255,0.5);
 }
 .step .quote {
-  font-size: clamp(0.74rem, 1.55vmin, 1.05rem);
-  font-weight: 600; line-height: 1.32; color: var(--ink);
+  font-size: clamp(0.84rem, 1.5vw, 1.02rem);
+  font-weight: 600; line-height: 1.34; color: var(--ink);
 }
 
-/* glowing flow connector between steps (wide layout) */
-.flow {
-  flex: 0 0 auto;
-  align-self: center;
-  color: var(--lime);
-  font-size: clamp(1rem, 2.4vmin, 1.8rem); font-weight: 800; line-height: 0;
-  text-shadow: 0 0 14px rgba(212,255,63,0.6);
-  animation: bob 1.8s ease-in-out infinite;
-  will-change: transform;
-}
-@keyframes bob { 0%,100%{transform:translateX(0)} 50%{transform:translateX(5px)} }
-
-/* STEP 4 — the mic drop (compact emphasis) */
+/* STEP 4 — the mic drop (compact emphasis: gradient text, magenta border, glow) */
 .step.finale {
   border-color: rgba(255,45,149,0.55);
   background: linear-gradient(135deg, rgba(255,45,149,0.16), rgba(212,255,63,0.07)), rgba(18,14,38,0.55);
-  box-shadow: 0 0 40px rgba(255,45,149,0.35);
+  box-shadow: 0 0 34px rgba(255,45,149,0.30);
 }
 .step.finale .num {
   background: linear-gradient(135deg, var(--magenta), var(--lime));
-  box-shadow: 0 0 0 3px rgba(7,7,13,1), 0 0 26px rgba(255,45,149,0.6), 0 0 46px rgba(212,255,63,0.40);
+  box-shadow: 0 0 0 3px rgba(7,7,13,1), 0 0 24px rgba(255,45,149,0.55), 0 0 40px rgba(212,255,63,0.35);
   animation: finaleScale 1.8s ease-in-out infinite;
 }
 .step.finale .num::after {
   background: radial-gradient(closest-side, rgba(255,45,149,0.6), rgba(212,255,63,0.35), transparent 75%);
   animation: finaleGlow 1.8s ease-in-out infinite;
 }
-@keyframes finaleScale { 0%,100%{transform:scale(1) rotate(-1deg)} 50%{transform:scale(1.07) rotate(1deg)} }
+@keyframes finaleScale { 0%,100%{transform:scale(1) rotate(-1deg)} 50%{transform:scale(1.06) rotate(1deg)} }
 @keyframes finaleGlow  { 0%,100%{opacity:0.45} 50%{opacity:1} }
 .step.finale .label { color: var(--lime); text-shadow: 0 0 12px rgba(212,255,63,0.6); }
 .step.finale .quote {
   font-family: var(--display); text-transform: uppercase; letter-spacing: 0.5px;
-  font-size: clamp(0.95rem, 2.5vmin, 1.7rem); line-height: 1.05;
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem); line-height: 1.08;
   background: linear-gradient(92deg, var(--magenta), var(--lime));
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 16px rgba(255,45,149,0.55));
+  filter: drop-shadow(0 0 14px rgba(255,45,149,0.55));
 }
 
 /* =====================================================================
-   (c) QUOTE SHEETS — the payoff. Row of 3 glowing action cards.
-   Brighter / bordered emphasis since this is THE action.
+   (3) CONNECTOR — short line into the quote sheets
    ===================================================================== */
-.quotes { flex: 0 0 auto; }
-.quotes-eyebrow {
+.connector {
   text-align: center;
   font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase;
-  font-size: clamp(0.55rem, 1.25vmin, 0.78rem);
+  font-size: clamp(0.62rem, 1.15vw, 0.8rem);
   color: var(--lime); text-shadow: 0 0 12px rgba(212,255,63,0.5);
-  margin-bottom: clamp(5px, 1vh, 12px);
+  margin: clamp(14px, 2.4vw, 22px) 0 clamp(10px, 1.8vw, 16px);
 }
+
+/* =====================================================================
+   (4) QUOTE SHEETS — compact row of 3 SHORT action cards. The payoff / CTA,
+   so these are the brightest, most action-y elements. Wrap to stack narrow.
+   ===================================================================== */
 .launchers {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: clamp(8px, 1.4vw, 20px);
+  gap: clamp(10px, 1.6vw, 18px);
 }
 .launch-card {
   position: relative; overflow: hidden;
-  display: flex; align-items: center; gap: clamp(8px, 1.4vw, 16px);
-  padding: clamp(10px, 1.8vmin, 20px) clamp(12px, 1.8vmin, 22px);
-  border-radius: clamp(12px, 1.6vmin, 20px);
+  display: flex; align-items: center; gap: clamp(10px, 1.2vw, 14px);
+  padding: clamp(12px, 1.8vw, 18px);
+  border-radius: clamp(12px, 1.4vw, 18px);
   /* brighter / bordered = "this is the action" */
-  background: linear-gradient(135deg, rgba(0,240,255,0.10), rgba(18,14,38,0.7));
+  background: linear-gradient(135deg, rgba(0,240,255,0.12), rgba(18,14,38,0.72));
   border: 1.5px solid rgba(0,240,255,0.45);
-  box-shadow: 0 0 28px rgba(0,240,255,0.20);
+  box-shadow: 0 0 26px rgba(0,240,255,0.20);
   transition: transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s, border-color .3s;
   -webkit-tap-highlight-color: transparent;
+  animation: ctaPulse 3.4s ease-in-out infinite;
+  will-change: transform;
 }
-.launch-card.c2 { background: linear-gradient(135deg, rgba(255,45,149,0.10), rgba(18,14,38,0.7)); border-color: rgba(255,45,149,0.45); box-shadow: 0 0 28px rgba(255,45,149,0.20); }
-.launch-card.c3 { background: linear-gradient(135deg, rgba(212,255,63,0.10), rgba(18,14,38,0.7)); border-color: rgba(212,255,63,0.45); box-shadow: 0 0 28px rgba(212,255,63,0.20); }
+.launch-card.c2 { background: linear-gradient(135deg, rgba(255,45,149,0.12), rgba(18,14,38,0.72)); border-color: rgba(255,45,149,0.45); box-shadow: 0 0 26px rgba(255,45,149,0.20); animation-delay: .4s; }
+.launch-card.c3 { background: linear-gradient(135deg, rgba(212,255,63,0.12), rgba(18,14,38,0.72)); border-color: rgba(212,255,63,0.45); box-shadow: 0 0 26px rgba(212,255,63,0.20); animation-delay: .8s; }
+/* gentle continuous CTA breathing — transform only */
+@keyframes ctaPulse { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
 .launch-card .icon {
   flex: 0 0 auto;
-  width: clamp(34px, 5vmin, 50px); height: clamp(34px, 5vmin, 50px);
-  border-radius: clamp(9px, 1.2vmin, 14px);
+  width: clamp(38px, 4vw, 48px); height: clamp(38px, 4vw, 48px);
+  border-radius: clamp(10px, 1.2vw, 14px);
   display: flex; align-items: center; justify-content: center;
-  font-size: clamp(1.1rem, 2.6vmin, 1.7rem);
+  font-size: clamp(1.2rem, 2.2vw, 1.6rem);
   background: rgba(0,240,255,0.12); border: 1px solid rgba(0,240,255,0.35);
-  box-shadow: 0 0 18px rgba(0,240,255,0.30);
+  box-shadow: 0 0 16px rgba(0,240,255,0.28);
 }
-.launch-card.c2 .icon { background: rgba(255,45,149,0.12); border-color: rgba(255,45,149,0.35); box-shadow: 0 0 18px rgba(255,45,149,0.30); }
-.launch-card.c3 .icon { background: rgba(212,255,63,0.12); border-color: rgba(212,255,63,0.35); box-shadow: 0 0 18px rgba(212,255,63,0.30); }
+.launch-card.c2 .icon { background: rgba(255,45,149,0.12); border-color: rgba(255,45,149,0.35); box-shadow: 0 0 16px rgba(255,45,149,0.28); }
+.launch-card.c3 .icon { background: rgba(212,255,63,0.12); border-color: rgba(212,255,63,0.35); box-shadow: 0 0 16px rgba(212,255,63,0.28); }
 .launch-card .txt { display: flex; flex-direction: column; min-width: 0; }
-.launch-card h3 { font-size: clamp(0.82rem, 1.7vmin, 1.18rem); font-weight: 800; line-height: 1.12; }
+.launch-card h3 { font-size: clamp(0.95rem, 1.6vw, 1.15rem); font-weight: 800; line-height: 1.12; }
 .launch-card .act {
-  margin-top: 2px; font-weight: 700; letter-spacing: 0.03em;
-  font-size: clamp(0.62rem, 1.3vmin, 0.9rem);
+  margin-top: 3px; font-weight: 700; letter-spacing: 0.03em;
+  font-size: clamp(0.68rem, 1.1vw, 0.85rem);
   color: var(--cyan); display: inline-flex; align-items: center; gap: 6px;
 }
 .launch-card.c2 .act { color: var(--magenta); }
 .launch-card.c3 .act { color: var(--lime); }
 .launch-card .act .arr { transition: transform .3s; }
 
-/* shine sweep on hover (desktop) — box-shadow transition fine on :hover */
+/* shine sweep on hover (box-shadow transition only on :hover state, not animated) */
 .launch-card::before {
   content: ""; position: absolute; top: 0; left: -120%; width: 70%; height: 100%;
   background: linear-gradient(110deg, transparent, rgba(255,255,255,0.22), transparent);
   transform: skewX(-18deg); transition: left .7s ease;
 }
-.launch-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 12px 44px rgba(0,240,255,0.40); }
-.launch-card.c2:hover { box-shadow: 0 12px 44px rgba(255,45,149,0.40); }
-.launch-card.c3:hover { box-shadow: 0 12px 44px rgba(212,255,63,0.40); }
+.launch-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 12px 40px rgba(0,240,255,0.40); }
+.launch-card.c2:hover { box-shadow: 0 12px 40px rgba(255,45,149,0.40); }
+.launch-card.c3:hover { box-shadow: 0 12px 40px rgba(212,255,63,0.40); }
 .launch-card:hover::before { left: 130%; }
 .launch-card:hover .act .arr { transform: translateX(5px); }
 /* tap feedback */
 .launch-card:active { transform: scale(0.97); }
 
 /* =====================================================================
-   (d) TINY FOOTER — one compact branding line
+   (5) TINY FOOTER — one compact branding line
    ===================================================================== */
-.footer { flex: 0 0 auto; text-align: center; }
+.footer { text-align: center; margin-top: clamp(14px, 2.2vw, 22px); }
 .footer .brand {
   font-family: var(--display); text-transform: uppercase; letter-spacing: 1px;
-  font-size: clamp(0.7rem, 1.7vmin, 1.15rem);
+  font-size: clamp(0.78rem, 1.5vw, 1.05rem);
   background: linear-gradient(92deg, var(--cyan), var(--magenta), var(--lime));
   background-size: 200% auto;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
@@ -375,40 +352,16 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* =====================================================================
-   ORIENTATION / NARROW — tight 2x2 grid of step cards, stacked quotes.
-   Triggers on portrait OR narrow widths.
+   RESPONSIVE — collapse the 2x2 script grid and 3-up CTA row to 1 column
+   on narrow embed widths.
    ===================================================================== */
-@media (max-width: 759px), (orientation: portrait) {
-  .steps {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-auto-rows: 1fr;
-    gap: clamp(6px, 1.4vmin, 14px);
-  }
-  .step { flex: initial; }
-  /* hide the horizontal arrows in grid mode */
-  .flow { display: none; }
-  .step .quote { font-size: clamp(0.72rem, 2vmin, 1rem); }
-  .step.finale .quote { font-size: clamp(0.9rem, 3vmin, 1.4rem); }
-  .launchers { grid-template-columns: 1fr; gap: clamp(6px, 1.2vh, 12px); }
-}
-
-/* very narrow phones: stack quote cards (already 1 col above) and tighten */
-@media (max-width: 420px) {
-  .launch-card { padding: 9px 12px; }
+@media (max-width: 560px) {
+  .steps { grid-template-columns: 1fr; }
+  .launchers { grid-template-columns: 1fr; }
 }
 
 /* =====================================================================
-   SHORT SCREENS — last-resort scroll fallback so content is NEVER clipped
-   if the auto-fit hits its floor on extreme/tiny screens.
-   ===================================================================== */
-@media (max-height: 480px) {
-  body, .viewport { height: auto; min-height: 100vh; min-height: 100svh; overflow: auto; }
-  .stage { height: auto; min-height: 100svh; }
-}
-
-/* =====================================================================
-   REDUCED MOTION — hold heavy continuous motion, keep content visible
+   REDUCED MOTION — hold continuous motion, keep everything visible
    ===================================================================== */
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
@@ -418,26 +371,28 @@ a { text-decoration: none; color: inherit; }
 </head>
 <body>
 
-<!-- ===================== STATIC NEON BACKGROUND ===================== -->
-<div class="bg-gradient"></div>
-<div class="orb o1"></div>
-<div class="orb o2"></div>
+<!-- ===================== OUTER WRAP (centers the panel) ===================== -->
+<div class="wrap">
+  <!-- The single neon panel. All background decoration is contained inside. -->
+  <div class="panel">
 
-<!-- ===================== VIEWPORT (100svh, overflow hidden) ===================== -->
-<div class="viewport" id="viewport">
-  <!-- .stage is what the JS auto-fit may transform: scale() down -->
-  <div class="stage" id="stage">
+    <!-- Contained background decoration (absolute, clipped by .panel) -->
+    <div class="bg-gradient" aria-hidden="true"></div>
+    <div class="orb o1" aria-hidden="true"></div>
+    <div class="orb o2" aria-hidden="true"></div>
 
-    <!-- (a) COMPACT HEADER -->
-    <header class="header">
-      <div class="brand-tag reveal">Blufox Mobile · Greater Chicago · 6th Gen Hub</div>
-      <h1 class="reveal">The Mobile Discount Close</h1>
-      <p class="subline reveal">Four questions. One close. <b>Every customer qualifies for more.</b></p>
-    </header>
+    <!-- All real content sits above the background -->
+    <div class="content">
 
-    <!-- (b) THE SCRIPT — 4 steps (row when wide, 2x2 when narrow/portrait) -->
-    <section class="script">
-      <p class="script-eyebrow reveal">The Script · Run It Every Time</p>
+      <!-- (1) COMPACT HERO -->
+      <header class="hero">
+        <div class="brand-tag reveal">Blufox Mobile · Greater Chicago · 6th Gen Hub</div>
+        <h1 class="reveal">The Mobile Discount Close</h1>
+        <p class="subline reveal">Four questions. One close. <b>Every customer qualifies for more.</b></p>
+      </header>
+
+      <!-- (2) THE SCRIPT — tight 2x2 grid of 4 compact cards -->
+      <p class="section-eyebrow script-eyebrow reveal">The Script · Run It Every Time</p>
       <div class="steps">
 
         <!-- Step 1 -->
@@ -446,7 +401,6 @@ a { text-decoration: none; color: inherit; }
           <span class="label">The Hook</span>
           <p class="quote">There is another discount that you qualify for, and it's our mobile discount. Who do you have your cell phones with?</p>
         </div>
-        <div class="flow reveal" aria-hidden="true">→</div>
 
         <!-- Step 2 -->
         <div class="step reveal">
@@ -454,7 +408,6 @@ a { text-decoration: none; color: inherit; }
           <span class="label">Qualify The Lines</span>
           <p class="quote">Great! How many lines do you have?</p>
         </div>
-        <div class="flow reveal" aria-hidden="true">→</div>
 
         <!-- Step 3 -->
         <div class="step reveal">
@@ -462,7 +415,6 @@ a { text-decoration: none; color: inherit; }
           <span class="label">Find The Pain</span>
           <p class="quote">What does your cell phone bill cost you each month?</p>
         </div>
-        <div class="flow reveal" aria-hidden="true">→</div>
 
         <!-- Step 4 — THE MIC DROP -->
         <div class="step finale reveal">
@@ -472,11 +424,11 @@ a { text-decoration: none; color: inherit; }
         </div>
 
       </div>
-    </section>
 
-    <!-- (c) QUOTE SHEETS — the payoff, always in view -->
-    <section class="quotes">
-      <p class="quotes-eyebrow reveal">Now Run Their Numbers 👇</p>
+      <!-- (3) CONNECTOR -->
+      <p class="connector reveal">Now Run Their Numbers 👇</p>
+
+      <!-- (4) QUOTE SHEETS — compact row of 3 SHORT action cards -->
       <div class="launchers">
 
         <a class="launch-card c1 reveal" href="https://blufoxmobile.github.io/Mobile-Quote-Sheet-6th-Gen/">
@@ -504,36 +456,27 @@ a { text-decoration: none; color: inherit; }
         </a>
 
       </div>
-    </section>
 
-    <!-- (d) TINY FOOTER -->
-    <footer class="footer">
-      <div class="brand reveal">Blufox Mobile · Greater Chicago Region · 6th Gen Hub</div>
-    </footer>
+      <!-- (5) TINY FOOTER -->
+      <footer class="footer">
+        <div class="brand reveal">Blufox Mobile · Greater Chicago Region · 6th Gen Hub</div>
+      </footer>
 
-  </div>
-</div>
+    </div><!-- /.content -->
+  </div><!-- /.panel -->
+</div><!-- /.wrap -->
 
 <script>
 /* =====================================================================
-   JS — (1) quick staggered reveal-on-load, (2) bulletproof auto-fit.
-   No scroll handler. No canvas. Nothing per-frame except the debounced
-   fit measurement on resize / orientation / fonts.ready.
+   JS — ONLY a quick time-based staggered reveal-on-load.
+   No auto-fit, no per-frame drawing, no scroll/resize/observer listeners.
+   A safety timeout guarantees content can never be stuck invisible.
    ===================================================================== */
 (function () {
   "use strict";
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  /* ---- Low-power detect: kill orb drift on weak / coarse-pointer devices ---- */
-  var LOWPOWER = window.matchMedia('(pointer:coarse)').matches ||
-                 (navigator.hardwareConcurrency || 4) <= 4;
-  if (LOWPOWER) document.body.classList.add("no-orb-drift");
-
-  /* =====================================================================
-     REVEAL ON LOAD — quick stagger. No IntersectionObserver (no scroll).
-     A safety timeout guarantees content can never be stuck invisible.
-     ===================================================================== */
   var reveals = document.querySelectorAll(".reveal");
+
   function revealAll() {
     reveals.forEach(function (el, i) {
       if (reduced) { el.classList.add("in"); return; }
@@ -542,73 +485,11 @@ a { text-decoration: none; color: inherit; }
   }
   // fire on next frame so transitions take effect
   requestAnimationFrame(function () { requestAnimationFrame(revealAll); });
+
   // hard safety net: never leave anything hidden
-  setTimeout(function () { reveals.forEach(function (el) { el.classList.add("in"); }); }, 2200);
-
-  /* =====================================================================
-     AUTO-FIT — guarantee the stage fits any screen.
-     Measure stage natural content vs available space; if it overflows,
-     apply transform: scale(f) (origin top center) where
-     f = min(1, availH/contentH, availW/contentW), floored at ~0.65.
-     If the needed scale would fall below the floor, allow scrolling as a
-     last resort so content is NEVER clipped or unreachable.
-     ===================================================================== */
-  var FLOOR = 0.65;
-  var viewport = document.getElementById("viewport");
-  var stage = document.getElementById("stage");
-
-  function fit() {
-    if (!stage || !viewport) return;
-    // reset before measuring natural size
-    stage.style.transform = "none";
-    viewport.style.overflow = "hidden";
-    document.body.style.overflowY = "hidden";
-
-    // available space = the viewport box
-    var availW = viewport.clientWidth;
-    var availH = viewport.clientHeight;
-
-    // natural content size of the (unscaled) stage
-    var contentW = stage.scrollWidth;
-    var contentH = stage.scrollHeight;
-    if (!contentW || !contentH) return;
-
-    var f = Math.min(1, availH / contentH, availW / contentW);
-
-    if (f >= 1) {
-      // fits naturally
-      stage.style.transform = "none";
-    } else if (f >= FLOOR) {
-      // scale it down to fit exactly
-      stage.style.transform = "scale(" + f + ")";
-    } else {
-      // extreme/tiny screen: clamp at floor and allow scrolling so
-      // nothing is ever clipped or unreachable
-      stage.style.transform = "scale(" + FLOOR + ")";
-      viewport.style.overflow = "auto";
-      document.body.style.overflowY = "auto";
-    }
-  }
-
-  /* debounced resize / orientation */
-  var rt;
-  function scheduleFit() {
-    clearTimeout(rt);
-    rt = setTimeout(fit, 120);
-  }
-  window.addEventListener("resize", scheduleFit);
-  window.addEventListener("orientationchange", scheduleFit);
-
-  /* run on load */
-  fit();
-  window.addEventListener("load", fit);
-
-  /* re-run once web fonts settle so Anton/Poppins metrics don't break fit */
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(function () { fit(); });
-  }
-  // extra pass after reveal stagger completes (in case transforms shifted size)
-  setTimeout(fit, 700);
+  setTimeout(function () {
+    reveals.forEach(function (el) { el.classList.add("in"); });
+  }, 2200);
 })();
 </script>
 
