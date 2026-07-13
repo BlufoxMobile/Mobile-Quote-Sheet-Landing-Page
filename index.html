@@ -45,11 +45,16 @@ body{
   line-height:1.55;
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
+  position:relative;
+  -webkit-overflow-scrolling:touch;
 }
 ::selection{background:rgba(139,92,246,.4)}
 
 /* ambient background */
 .orbs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+/* inside an iframe (GoDaddy embed), fixed layers glitch on iPadOS — pin to page instead */
+.embedded .orbs{position:absolute;z-index:0}
+.embedded header,.embedded section,.embedded footer{position:relative;z-index:1}
 .orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.16;animation:drift 26s ease-in-out infinite alternate}
 .orb.b{width:52vmax;height:52vmax;background:#2578c2;top:-20vmax;left:-14vmax}
 .orb.p{width:44vmax;height:44vmax;background:#6d28d9;bottom:-18vmax;right:-10vmax;animation-delay:-9s}
@@ -217,26 +222,26 @@ h2 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:tex
 .tools{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2.2vw,22px)}
 @media (max-width:820px){.tools{grid-template-columns:1fr}}
 a.tool{
-  display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--cream);
-  background:linear-gradient(180deg,var(--card2),var(--card));
-  border:1px solid var(--line);border-radius:var(--radius);
+  display:flex;flex-direction:column;gap:10px;text-decoration:none;color:#fff;
+  background:var(--tc);
+  background:linear-gradient(165deg,var(--tc) 0%,var(--tc2,var(--tc)) 100%);
+  border:1px solid rgba(255,255,255,.28);border-radius:var(--radius);
   padding:clamp(22px,3vw,30px);position:relative;overflow:hidden;
+  box-shadow:0 16px 44px rgba(0,0,0,.4);
   transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease
 }
-a.tool:hover{transform:translateY(-6px);border-color:rgba(139,92,246,.5);border-color:color-mix(in srgb,var(--tc) 55%,transparent);box-shadow:0 26px 60px rgba(0,0,0,.5)}
-a.tool::after{content:"";position:absolute;inset:auto 0 0 0;height:3px;background:var(--tc)}
+a.tool:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.55);box-shadow:0 26px 64px rgba(0,0,0,.55),0 0 44px var(--glow,rgba(139,92,246,.35))}
+a.tool::after{content:"";position:absolute;inset:auto 0 0 0;height:4px;background:rgba(255,255,255,.4)}
 .tool .ico{
   width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:22px;
-  background:rgba(242,234,216,.08);
-  border:1px solid rgba(242,234,216,.28);
-  background:color-mix(in srgb,var(--tc) 15%,transparent);
-  border:1px solid color-mix(in srgb,var(--tc) 38%,transparent)
+  background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.4)
 }
-.tool h3{font-family:var(--font-head);font-weight:700;font-size:20px}
-.tool p{font-size:13.5px;color:var(--cream-dim)}
+.tool h3{font-family:var(--font-head);font-weight:800;font-size:20px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.25)}
+.tool p{font-size:13.5px;color:rgba(255,255,255,.92);text-shadow:0 1px 2px rgba(0,0,0,.2)}
 .tool .go{
-  margin-top:auto;font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--tc);display:inline-flex;align-items:center;gap:8px
+  margin-top:auto;font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;font-weight:700;
+  text-transform:uppercase;color:#fff;display:inline-flex;align-items:center;gap:8px
 }
 .tool .go::after{content:"→";transition:transform .3s ease}
 .tool:hover .go::after{transform:translateX(5px)}
@@ -372,19 +377,19 @@ footer .c3s{color:var(--orange);font-weight:700}
       <h2>Pick the sheet. <span class="grad">Close the deal.</span></h2>
     </div>
     <div class="tools">
-      <a class="tool rv" style="--tc:var(--blue)" href="https://blufoxmobile.github.io/Mobile-Quote-Sheet-6th-Gen/" target="_blank" rel="noopener">
+      <a class="tool rv" style="--tc:#2f86cf;--tc2:#1a5c9c;--glow:rgba(47,134,207,.45)" href="https://blufoxmobile.github.io/Mobile-Quote-Sheet-6th-Gen/" target="_blank" rel="noopener">
         <span class="ico" aria-hidden="true">📱</span>
         <h3>6th Gen Quote Sheet</h3>
         <p>New lines, trade-ins, and the full Plus-first T-chart — the sheet from the video.</p>
         <span class="go">Run the numbers</span>
       </a>
-      <a class="tool rv d1" style="--tc:var(--orange)" href="https://blufoxmobile.github.io/Upgrade-Quote-Sheet/" target="_blank" rel="noopener">
+      <a class="tool rv d1" style="--tc:#e8862e;--tc2:#b45a0a;--glow:rgba(232,134,46,.45)" href="https://blufoxmobile.github.io/Upgrade-Quote-Sheet/" target="_blank" rel="noopener">
         <span class="ico" aria-hidden="true">⚡</span>
         <h3>Upgrade Quote Sheet</h3>
         <p>Existing Xfinity Mobile customers — upgrades, Anytime Upgrade, and promo eligibility.</p>
         <span class="go">Run the numbers</span>
       </a>
-      <a class="tool rv d2" style="--tc:var(--purple)" href="https://blufoxmobile.github.io/Internet-Rate-Plan-Calculator/" target="_blank" rel="noopener">
+      <a class="tool rv d2" style="--tc:#8b5cf6;--tc2:#5d1fc0;--glow:rgba(139,92,246,.5)" href="https://blufoxmobile.github.io/Internet-Rate-Plan-Calculator/" target="_blank" rel="noopener">
         <span class="ico" aria-hidden="true">🌐</span>
         <h3>Internet Rate Calculator</h3>
         <p>Bundle the internet side — rate plans and the discounts that set up the mobile hook.</p>
@@ -399,11 +404,20 @@ footer .c3s{color:var(--orange);font-weight:700}
 </footer>
 
 <script>
+// embed mode (GoDaddy / any iframe): pin background to page, reveal everything immediately
+const EMBEDDED = (()=>{ try { return window.self !== window.top; } catch(e){ return true; } })();
+if (EMBEDDED) document.documentElement.classList.add('embedded');
+
 // reveal on scroll
-const io = new IntersectionObserver((es)=>{
-  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
-},{threshold:.14,rootMargin:'0px 0px -6% 0px'});
-document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+if (EMBEDDED) {
+  // no reliable inner viewport inside an auto-height iframe — show everything
+  document.querySelectorAll('.rv').forEach(el=>el.classList.add('in'));
+} else {
+  const io = new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.14,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+}
 
 // animated counters
 const fmt = n => n.toLocaleString('en-US');
@@ -422,7 +436,7 @@ const cio = new IntersectionObserver((es)=>{
       if(p<1) requestAnimationFrame(tick);
     })(t0);
   });
-},{threshold:.5});
+},{threshold: EMBEDDED ? 0 : .5});
 document.querySelectorAll('.counter .val').forEach(el=>cio.observe(el));
 </script>
 </body>
