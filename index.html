@@ -246,6 +246,16 @@ a.tool::after{content:"";position:absolute;inset:auto 0 0 0;height:4px;backgroun
 .tool .go::after{content:"→";transition:transform .3s ease}
 .tool:hover .go::after{transform:translateX(5px)}
 
+/* ───────── activation posters ───────── */
+.posters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(14px,2.5vw,28px);max-width:920px;margin:0 auto}
+@media (max-width:700px){.posters{grid-template-columns:1fr;max-width:520px}}
+a.poster{display:block;border-radius:var(--radius);overflow:hidden;
+  border:1px solid rgba(139,92,246,.35);box-shadow:0 20px 60px rgba(0,0,0,.5);
+  transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease}
+a.poster:hover{transform:translateY(-6px);border-color:rgba(139,92,246,.7);box-shadow:0 30px 70px rgba(0,0,0,.6),0 0 40px rgba(139,92,246,.35)}
+a.poster img{display:block;width:100%;height:auto}
+.poster-note{text-align:center;margin-top:16px;font-size:13px;color:var(--cream-faint);font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
+
 /* ───────── footer ───────── */
 footer{
   margin-top:clamp(60px,10vh,120px);padding:34px 0 44px;border-top:1px solid var(--line);
@@ -399,6 +409,26 @@ footer .c3s{color:var(--orange);font-weight:700}
   </div>
 </section>
 
+<!-- ───────── ACTIVATION SUPPORT ───────── -->
+<section id="activation">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="sec-tag purple">Activation Support</div>
+      <h2>Phone won't <span class="grad">activate?</span></h2>
+      <p class="sec-sub">Scan the QR code to activate an XM line, or follow the device-by-device eSIM steps. Tap a poster to open it full-size.</p>
+    </div>
+    <div class="posters">
+      <a class="poster rv" href="assets/activation-qr.png" target="_blank" rel="noopener">
+        <img src="assets/activation-qr.png" alt="Xfinity Mobile Activation poster — scan this QR code to activate an XM line if you are having difficulties with activation" loading="lazy">
+      </a>
+      <a class="poster rv d1" href="assets/activation-guide.png" target="_blank" rel="noopener">
+        <img src="assets/activation-guide.png" alt="How to activate your device with Xfinity Mobile — eSIM setup steps for Apple, Samsung Galaxy, and Google Pixel devices, plus xfinitymobile.com/activate for help" loading="lazy">
+      </a>
+    </div>
+    <p class="poster-note rv d2">Still stuck? xfinitymobile.com/activate</p>
+  </div>
+</section>
+
 <footer>
   <div class="wrap"><span class="c3s">C³</span> · Blufox Mobile · Greater Chicago Region · 6th Gen Hub</div>
 </footer>
@@ -406,7 +436,24 @@ footer .c3s{color:var(--orange);font-weight:700}
 <script>
 // embed mode (GoDaddy / any iframe): pin background to page, reveal everything immediately
 const EMBEDDED = (()=>{ try { return window.self !== window.top; } catch(e){ return true; } })();
-if (EMBEDDED) document.documentElement.classList.add('embedded');
+if (EMBEDDED) {
+  document.documentElement.classList.add('embedded');
+  // auto-height handshake: tell the parent page (GoDaddy embed snippet) how tall we are
+  let lastH = 0;
+  const sendH = () => {
+    // measure real content height (footer bottom), NOT scrollHeight — inside an
+    // iframe scrollHeight is clamped to the iframe height and can never shrink
+    const foot = document.querySelector('footer');
+    const h = Math.ceil((foot ? foot.getBoundingClientRect().bottom + window.scrollY : document.body.offsetHeight) + 2);
+    if (h > 400 && Math.abs(h - lastH) > 2) { lastH = h; parent.postMessage({type:'mdc-height', h}, '*'); }
+  };
+  window.addEventListener('load', sendH);
+  window.addEventListener('resize', sendH);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sendH);
+  if (window.ResizeObserver) new ResizeObserver(sendH).observe(document.body);
+  setInterval(sendH, 1500);
+  sendH();
+}
 
 // reveal on scroll
 if (EMBEDDED) {
